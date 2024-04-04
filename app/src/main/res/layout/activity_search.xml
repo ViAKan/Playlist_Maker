@@ -1,14 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchActivity">
-    <TextView
+    android:background="?attr/colorPrimaryVariant"
+    android:orientation="vertical"
+    android:theme="@style/Theme.PlaylistMaker">
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/search"
-        android:textSize="50sp"
-        android:gravity="center"/>
+        android:layout_height="wrap_content"
+        android:paddingVertical="4dp"
+        android:paddingStart="4dp"
+        android:paddingEnd="52dp">
+
+
+        <ImageButton
+            android:id="@+id/buttonBack"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:background="@color/transparent"
+            android:contentDescription="@string/description"
+            android:src="@drawable/vector"
+            app:iconGravity="start"
+            app:tint="?attr/colorOnPrimary" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/ys_display_medium"
+            android:paddingStart="12dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="12dp"
+            android:text="@string/search"
+            android:textAllCaps="false"
+            android:textColor="?attr/colorOnPrimary"
+            android:textFontWeight="500"
+            android:textSize="@dimen/text_size" />
+
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp">
+
+        <LinearLayout
+            android:id="@+id/layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="8dp"
+            android:background="@drawable/searchline"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingStart="18dp"
+                android:src="@drawable/lupa"
+                app:tint="?attr/colorOnSurface" />
+
+            <EditText
+                android:id="@+id/inputEditText"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/lightGrey"
+                android:hint="@string/search"
+                android:inputType="text"
+                android:maxLength="25"
+                android:maxLines="1"
+                android:paddingStart="8dp"
+                android:textColor="@color/black"
+                android:textColorHint="?attr/colorOnSurface"
+                android:textSize="@dimen/settings_text_size" />
+
+            <ImageView
+                android:id="@+id/clearIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </FrameLayout>
 </LinearLayout>
