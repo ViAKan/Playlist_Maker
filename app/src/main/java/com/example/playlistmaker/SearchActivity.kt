@@ -12,7 +12,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 
 class SearchActivity : AppCompatActivity() {
-    var str: CharSequence? = null
+    private var searchQuery: CharSequence? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -37,7 +37,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                str = s
+                searchQuery = s
                 clearButton.visibility = clearButtonVisibility(s)
             }
 
@@ -50,18 +50,14 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(SEARCH_NAME, str.toString())
-    }
-
-    companion object {
-        const val SEARCH_NAME = "NAME"
+        outState.putString(SEARCH_NAME, searchQuery.toString())
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         val editText = findViewById<EditText>(R.id.inputEditText)
-        str = savedInstanceState.getString(SEARCH_NAME, null)
-        editText.setText(str)
+        searchQuery = savedInstanceState.getString(SEARCH_NAME, null)
+        editText.setText(searchQuery)
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
@@ -70,5 +66,8 @@ class SearchActivity : AppCompatActivity() {
         } else {
             View.VISIBLE
         }
+    }
+    companion object {
+        private const val SEARCH_NAME = "NAME"
     }
 }
