@@ -5,8 +5,10 @@
     <dimen name="btn_radius">16dp</dimen>
     <dimen name="icon_padding">8dp</dimen>
     <dimen name="marginStart">16dp</dimen>
-    <dimen name="marginVertical">21dp</dimen>
-    <dimen name="icon_margin_top">19dp</dimen>
-    <dimen name="icon_margin_bottom">18dp</dimen>
-    <dimen name="icon_margin_end">12dp</dimen>
+    <dimen name="marginVertical">20dp</dimen>
+    <dimen name="icon_margin_top">20dp</dimen>
+    <dimen name="icon_margin_bottom">16dp</dimen>
+    <dimen name="search_title_padding">4dp</dimen>
+    <dimen name="search_title_text_padding">12dp</dimen>
+    <dimen name="icon_search_padding">12dp</dimen>
 </resources>
