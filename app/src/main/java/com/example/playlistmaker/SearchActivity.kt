@@ -24,6 +24,8 @@ class SearchActivity : AppCompatActivity() {
         val inputEditText = findViewById<EditText>(R.id.inputEditText)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
 
+        inputEditText.requestFocus()
+
         backButton.setOnClickListener {
             finish()
         }
@@ -78,7 +80,7 @@ class SearchActivity : AppCompatActivity() {
         val author5 = resources.getString(R.string.track5_author)
         val imgSrc5 = resources.getString(R.string.track5_imageSource)
 
-        val trackList: ArrayList<Track> = arrayListOf(Track(name1, author1, time1, imgSrc1), Track(name2, author2, time2, imgSrc2), Track(name3, author3, time3, imgSrc3), Track(name4, author4, time4, imgSrc4), Track(name5, author5, time5, imgSrc5) )
+        val trackList: List<Track> = listOf(Track(name1, author1, time1, imgSrc1), Track(name2, author2, time2, imgSrc2), Track(name3, author3, time3, imgSrc3), Track(name4, author4, time4, imgSrc4), Track(name5, author5, time5, imgSrc5) )
 
         val trackAdapter = TrackAdapter(trackList)
         recyclerView.adapter = trackAdapter

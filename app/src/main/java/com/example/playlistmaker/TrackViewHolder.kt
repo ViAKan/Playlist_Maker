@@ -22,18 +22,18 @@ class TrackViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         trackTime.text = model.trackTime
         imgSource = model.artworkUrl100
 
-        if(trackName.text.length > 30){
-            trackName.text = trackName.text.substring(0,30) + "..."
+        if(trackName.text.length > 20){
+            trackName.text = trackName.text.substring(0,20) + "..."
         }
-        if(artistName.text.length > 30){
-            artistName.text = artistName.text.substring(0,30) + "..."
+        if(artistName.text.length > 17){
+            artistName.text = artistName.text.substring(0,17) + "..."
         }
 
         Glide.with(itemView)
             .load(imgSource)
             .centerInside()
             .transform(RoundedCorners(2))
-            .placeholder(R.drawable.placehold)
+            .placeholder(R.drawable.placeholder)
             .into(image)
     }
 
