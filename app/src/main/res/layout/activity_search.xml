@@ -81,7 +81,6 @@
                 android:textCursorDrawable="@drawable/text_cursor"
                 android:imeOptions="actionDone"
                 android:singleLine="true"/>
-
             <ImageView
                 android:id="@+id/clearIcon"
                 android:layout_width="wrap_content"
