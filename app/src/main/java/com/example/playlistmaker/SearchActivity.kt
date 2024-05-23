@@ -1,42 +1,21 @@
 package com.example.playlistmaker
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.random.Random
 
-class SearchActivity : Activity() {
+class SearchActivity : AppCompatActivity() {
     private var searchQuery: CharSequence? = null
-    private val baseUrl = "https://itunes.apple.com"
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val trackService = retrofit.create(iTunesApi::class.java)
-    private val trackList = ArrayList<Track>()
-    val adapter = TrackAdapter(trackList)
-    private lateinit var placeholderMessage: TextView
-    private lateinit var additionalMes: TextView
-    private lateinit var placeholderImg: ImageView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -44,22 +23,14 @@ class SearchActivity : Activity() {
         val backButton = findViewById<ImageButton>(R.id.buttonBack)
         val inputEditText = findViewById<EditText>(R.id.inputEditText)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
-        val updateBtn = findViewById<Button>(R.id.btn_update)
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
+
+        inputEditText.requestFocus()
 
         backButton.setOnClickListener {
             finish()
         }
 
         clearButton.setOnClickListener {
-            trackList.clear()
-            recyclerView.visibility = View.GONE
-            placeholderMessage.visibility = View.GONE
-            placeholderImg.visibility = View.GONE
-            additionalMes.visibility = View.GONE
-            updateBtn.visibility = View.GONE
             inputEditText.setText("")
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -80,77 +51,40 @@ class SearchActivity : Activity() {
         }
         inputEditText.addTextChangedListener(simpleTextWatcher)
 
-        inputEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                trackService.search(inputEditText.text.toString()).enqueue(object :
-                    Callback<TrackResponse> {
-                    override fun onResponse(call: Call<TrackResponse>,
-                                            response: Response<TrackResponse>
-                    ) {
-                        if (response.code() == 200) {
-                            trackList.clear()
-                            recyclerView.visibility = View.VISIBLE
-                            if (response.body()?.results?.isNotEmpty() == true) {
-                                trackList.addAll(response.body()?.results!!)
-                                adapter.notifyDataSetChanged()
-                            }
-                            if (trackList.isEmpty()) {
-                                showMessage(getString(R.string.nothing_found),"")
-                            }
-                            else {
-                                showMessage("", "")
-                            }
-                        }
-                        else {
-                            showMessage(getString(R.string.something_went_wrong),getString(R.string.additional_message))
-                            updateBtn.visibility = View.VISIBLE
-                        }
-                    }
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
-                    override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                        showMessage(getString(R.string.something_went_wrong), getString(R.string.additional_message))
-                        updateBtn.visibility = View.VISIBLE
-                    }
+        //Track 1
+        val name1 = resources.getString(R.string.track1_name)
+        val time1 = resources.getString(R.string.track1_time)
+        val author1 = resources.getString(R.string.track1_author)
+        val imgSrc1 = resources.getString(R.string.track1_imageSource)
+        //Track 2
+        val name2 = resources.getString(R.string.track2_name)
+        val time2 = resources.getString(R.string.track2_time)
+        val author2 = resources.getString(R.string.track2_author)
+        val imgSrc2 = resources.getString(R.string.track2_imageSource)
+        //Track 3
+        val name3 = resources.getString(R.string.track3_name)
+        val time3 = resources.getString(R.string.track3_time)
+        val author3 = resources.getString(R.string.track3_author)
+        val imgSrc3 = resources.getString(R.string.track3_imageSource)
+        //Track 4
+        val name4 = resources.getString(R.string.track4_name)
+        val time4 = resources.getString(R.string.track4_time)
+        val author4 = resources.getString(R.string.track4_author)
+        val imgSrc4 = resources.getString(R.string.track4_imageSource)
+        //Track 5
+        val name5 = resources.getString(R.string.track5_name)
+        val time5 = resources.getString(R.string.track5_time)
+        val author5 = resources.getString(R.string.track5_author)
+        val imgSrc5 = resources.getString(R.string.track5_imageSource)
 
-                })
-                true
-            }
-            false
-        }
-        updateBtn.setOnClickListener{
-                trackService.search(inputEditText.text.toString()).enqueue(object :
-                    Callback<TrackResponse> {
-                    override fun onResponse(call: Call<TrackResponse>,
-                                            response: Response<TrackResponse>
-                    ) {
-                        if (response.code() == 200) {
-                            updateBtn.visibility = View.GONE
-                            recyclerView.visibility = View.VISIBLE
-                            trackList.clear()
-                            if (response.body()?.results?.isNotEmpty() == true) {
-                                trackList.addAll(response.body()?.results!!)
-                                adapter.notifyDataSetChanged()
-                            }
-                            if (trackList.isEmpty()) {
-                                showMessage(getString(R.string.nothing_found),"")
-                            }
-                            else {
-                                showMessage("", "")
-                            }
-                        }
-                        else {
-                            showMessage(getString(R.string.something_went_wrong),getString(R.string.additional_message))
-                            updateBtn.visibility = View.VISIBLE
-                        }
-                    }
+        val trackList: List<Track> = listOf(Track(name1, author1, time1, imgSrc1), Track(name2, author2, time2, imgSrc2), Track(name3, author3, time3, imgSrc3), Track(name4, author4, time4, imgSrc4), Track(name5, author5, time5, imgSrc5) )
 
-                    override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                        showMessage(getString(R.string.something_went_wrong), getString(R.string.additional_message))
-                        updateBtn.visibility = View.VISIBLE
-                    }
+        val trackAdapter = TrackAdapter(trackList)
+        recyclerView.adapter = trackAdapter
 
-                })
-        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -174,27 +108,5 @@ class SearchActivity : Activity() {
     }
     companion object {
         private const val SEARCH_NAME = "NAME"
-    }
-    private fun showMessage(text: String, additionalMessage: String) {
-        placeholderMessage = findViewById(R.id.placeholderMessage)
-        additionalMes = findViewById(R.id.additionalMes)
-        placeholderImg = findViewById(R.id.placeholder_img)
-        placeholderImg.setImageResource(R.drawable.nothing_found_img)
-        if (text.isNotEmpty()) {
-            placeholderMessage.visibility = View.VISIBLE
-            placeholderImg.visibility = View.VISIBLE
-            trackList.clear()
-            adapter.notifyDataSetChanged()
-            placeholderMessage.text = text
-            if(!additionalMessage.equals("")){
-                additionalMes.visibility = View.VISIBLE
-                placeholderImg.setImageResource(R.drawable.internet_problem)
-                additionalMes.text = additionalMessage
-            }
-        } else {
-            placeholderMessage.visibility = View.GONE
-            additionalMes.visibility = View.GONE
-            placeholderImg.visibility = View.GONE
-        }
     }
 }
