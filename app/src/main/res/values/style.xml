@@ -56,4 +56,8 @@
         <item name="android:textColor">?attr/colorSecondary</item>
         <item name="android:layout_gravity">center_vertical</item>
     </style>
+
+    <style name="ForMyButton" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">54dp</item>
+    </style>
 </resources>
