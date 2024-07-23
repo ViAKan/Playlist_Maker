@@ -1,6 +1,5 @@
 package com.example.playlistmaker
 
-import android.graphics.Color
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -18,7 +17,7 @@ class TrackViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     private var imgSource: String = ""
     private val image: ImageView = itemView.findViewById(R.id.albumImg)
 
-    fun bind(model: Track) {
+    fun bind(model: Track, listener: TrackAdapter.Listener) {
         trackName.text = model.trackName
         artistName.text = model.artistName
         imgSource = model.artworkUrl100
@@ -29,6 +28,9 @@ class TrackViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
             .transform(RoundedCorners(2))
             .placeholder(R.drawable.placeholder)
             .into(image)
+        itemView.setOnClickListener {
+            listener.onClick(model)
+        }
     }
 
 }
