@@ -8,9 +8,16 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.Switch
 import android.widget.TextView
+import androidx.appcompat.widget.SwitchCompat
+import com.google.android.material.switchmaterial.SwitchMaterial
+
+const val THEME_PREFERENCES = "theme_preferences"
+const val THEME_KEY = "key_for_theme"
 
 class SettingsActivity : AppCompatActivity() {
+    val app = App()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings2)
@@ -51,6 +58,17 @@ class SettingsActivity : AppCompatActivity() {
             val agreeIntent = Intent(Intent.ACTION_VIEW, Uri.parse(resources.getString(R.string.offer)))
             startActivity(agreeIntent)
         }
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.switcher)
+        val sharedPrefs = getSharedPreferences(THEME_PREFERENCES, MODE_PRIVATE)
+        val key = sharedPrefs.getBoolean(THEME_KEY, (applicationContext as App).darkTheme)
+        themeSwitcher.setChecked(key)
+        (applicationContext as App).switchTheme(key)
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
 
+            sharedPrefs.edit()
+                    .putBoolean(THEME_KEY, checked)
+                    .apply()
+        }
     }
 }
