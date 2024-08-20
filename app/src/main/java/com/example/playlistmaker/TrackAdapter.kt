@@ -28,5 +28,4 @@ class TrackAdapter (
     interface Listener{
         fun onClick(track: Track)
     }
-
 }

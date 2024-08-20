@@ -2,6 +2,7 @@ package com.example.playlistmaker
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
@@ -29,6 +30,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 const val HISTORY_PREFS = "history_prefs"
 const val HISTORY_KEY = "key_for_hist"
@@ -255,6 +258,18 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
     }
 
     override fun onClick(track: Track) {
+
+        val displayIntent = Intent(this, PlayerActivity::class.java)
+        displayIntent.putExtra("name", track.trackName)
+        displayIntent.putExtra("author", track.artistName)
+        displayIntent.putExtra("duration", SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis))
+        displayIntent.putExtra("country", track.country)
+        displayIntent.putExtra("genre", track.primaryGenreName)
+        displayIntent.putExtra("year", track.releaseDate.substring(0,4))
+        displayIntent.putExtra("album", track.collectionName)
+        displayIntent.putExtra("imageSrc", track.artworkUrl100.replaceAfterLast('/',"512x512bb.jpg"))
+        startActivity(displayIntent)
+
         sharedPreferences = getSharedPreferences(HISTORY_PREFS, MODE_PRIVATE)
 
         for(song in historyList){
@@ -279,25 +294,4 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
             .apply()
 
     }
-
-//    private fun createJsonFromTrack(trackList: ArrayList<Track>): String {
-//        return Gson().toJson(trackList)
-//    }
-////
-////    private fun createTrackFromJson(json: String): ArrayList<Track> {
-////    val itemType = object : TypeToken<ArrayList<Track>>() {}.type
-////        return Gson().fromJson(json, itemType)
-////    }
-////
-////    fun addHistory(spH: SharedPreferences, history: ArrayList<Track>) {
-////        val json = Gson().toJson(history.toTypedArray())
-////        spH.edit().putString(HISTORY_KEY, json).apply()
-////    }
-////
-//    fun getHistoryFromSpH(spH: SharedPreferences): ArrayList<Track> {
-//        val itemType = object : TypeToken<ArrayList<Track>>() {}.type
-//        val json = spH.getString(HISTORY_KEY, null)
-//            ?: return ArrayList()
-//        return Gson().fromJson(json, itemType)
-//    }
 }
