@@ -11,6 +11,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -42,20 +44,37 @@ class PlayerActivity : AppCompatActivity() {
         val countrySong = findViewById<TextView>(R.id.countrySong)
         val cover = findViewById<ImageView>(R.id.cover)
         var imgSource: String = ""
-        title.text = intent.getStringExtra("name")
-        author.text = intent.getStringExtra("author")
-        durationSong.text = intent.getStringExtra("duration")
+        val type = object : TypeToken<Track>() {}.type
+        val track = Gson().fromJson<Track>(intent.getStringExtra(NAME_TRACK), type)
+        title.text = track.trackName
+        author.text = track.artistName
+        durationSong.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
         currentTime.text = durationSong.text
-        albumSong.text = intent.getStringExtra("album")
-        yearSong.text = intent.getStringExtra("year")
-        genreSong.text = intent.getStringExtra("genre")
-        countrySong.text = intent.getStringExtra("country")
-        imgSource = intent.getStringExtra("imageSrc").toString()
+        albumSong.text = track.collectionName
+        yearSong.text = track.releaseDate.substring(0,4)
+        genreSong.text = track.primaryGenreName
+        countrySong.text = track.country
+        imgSource = track.artworkUrl100.replaceAfterLast('/',"512x512bb.jpg")
         Glide.with(applicationContext)
             .load(imgSource)
             .centerInside()
             .transform(RoundedCorners(8))
             .placeholder(R.drawable.placeholder_max)
             .into(cover)
+//        title.text = intent.getStringExtra("name")
+//        author.text = intent.getStringExtra("author")
+//        durationSong.text = intent.getStringExtra("duration")
+//        currentTime.text = durationSong.text
+//        albumSong.text = intent.getStringExtra("album")
+//        yearSong.text = intent.getStringExtra("year")
+//        genreSong.text = intent.getStringExtra("genre")
+//        countrySong.text = intent.getStringExtra("country")
+//        imgSource = intent.getStringExtra("imageSrc").toString()
+//        Glide.with(applicationContext)
+//            .load(imgSource)
+//            .centerInside()
+//            .transform(RoundedCorners(8))
+//            .placeholder(R.drawable.placeholder_max)
+//            .into(cover)
     }
 }

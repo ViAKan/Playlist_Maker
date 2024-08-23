@@ -35,6 +35,7 @@ import java.util.Locale
 
 const val HISTORY_PREFS = "history_prefs"
 const val HISTORY_KEY = "key_for_hist"
+const val NAME_TRACK = "name"
 
 class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
     private var searchQuery: CharSequence? = null
@@ -260,14 +261,17 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
     override fun onClick(track: Track) {
 
         val displayIntent = Intent(this, PlayerActivity::class.java)
-        displayIntent.putExtra("name", track.trackName)
-        displayIntent.putExtra("author", track.artistName)
-        displayIntent.putExtra("duration", SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis))
-        displayIntent.putExtra("country", track.country)
-        displayIntent.putExtra("genre", track.primaryGenreName)
-        displayIntent.putExtra("year", track.releaseDate.substring(0,4))
-        displayIntent.putExtra("album", track.collectionName)
-        displayIntent.putExtra("imageSrc", track.artworkUrl100.replaceAfterLast('/',"512x512bb.jpg"))
+//        displayIntent.putExtra("name", track.trackName)
+//        displayIntent.putExtra("author", track.artistName)
+//        displayIntent.putExtra("duration", SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis))
+//        displayIntent.putExtra("country", track.country)
+//        displayIntent.putExtra("genre", track.primaryGenreName)
+//        displayIntent.putExtra("year", track.releaseDate.substring(0,4))
+//        displayIntent.putExtra("album", track.collectionName)
+//        displayIntent.putExtra("imageSrc", track.artworkUrl100.replaceAfterLast('/',"512x512bb.jpg"))
+//
+        val strTrack = Gson().toJson(track)
+        displayIntent.putExtra(NAME_TRACK, strTrack)
         startActivity(displayIntent)
 
         sharedPreferences = getSharedPreferences(HISTORY_PREFS, MODE_PRIVATE)
