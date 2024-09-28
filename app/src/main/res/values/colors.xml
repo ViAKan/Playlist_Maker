@@ -6,4 +6,6 @@
     <color name="transparent">#00ffffff</color>
     <color name="grey">#AEAFB4</color>
     <color name="lightGrey">#E6E8EB</color>
+    <color name="fade_black">#C5C6C7</color>
+    <color name="fade_white">#535459</color>
 </resources>
