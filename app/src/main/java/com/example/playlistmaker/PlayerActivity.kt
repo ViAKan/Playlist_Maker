@@ -1,6 +1,11 @@
 package com.example.playlistmaker
 
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -16,7 +21,19 @@ import com.google.gson.reflect.TypeToken
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+private const val STATE_DEFAULT = 0
+private const val STATE_PREPARED = 1
+private const val STATE_PLAYING = 2
+private const val STATE_PAUSED = 3
+private const val PLAY_DELAY = 300L
+
 class PlayerActivity : AppCompatActivity() {
+
+    private lateinit var play: ImageButton
+    private lateinit var currentTime: TextView
+    private var mediaPlayer = MediaPlayer()
+    private var playerState = STATE_DEFAULT
+    private val handler: Handler? = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +54,7 @@ class PlayerActivity : AppCompatActivity() {
         val title = findViewById<TextView>(R.id.title)
         val author = findViewById<TextView>(R.id.author)
         val durationSong = findViewById<TextView>(R.id.durationSong)
-        val currentTime = findViewById<TextView>(R.id.currentTime)
+        currentTime = findViewById<TextView>(R.id.currentTime)
         val albumSong = findViewById<TextView>(R.id.albumSong)
         val yearSong = findViewById<TextView>(R.id.yearSong)
         val genreSong = findViewById<TextView>(R.id.genreSong)
@@ -49,7 +66,6 @@ class PlayerActivity : AppCompatActivity() {
         title.text = track.trackName
         author.text = track.artistName
         durationSong.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
-        currentTime.text = durationSong.text
         albumSong.text = track.collectionName
         yearSong.text = track.releaseDate.substring(0,4)
         genreSong.text = track.primaryGenreName
@@ -61,6 +77,15 @@ class PlayerActivity : AppCompatActivity() {
             .transform(RoundedCorners(8))
             .placeholder(R.drawable.placeholder_max)
             .into(cover)
+
+        play = findViewById(R.id.buttonPlay)
+        currentTime.text = "00:00"
+        play.isEnabled = false
+        val url = track.previewUrl
+        preparePlayer(url)
+        play.setOnClickListener {
+            playbackControl()
+        }
 //        title.text = intent.getStringExtra("name")
 //        author.text = intent.getStringExtra("author")
 //        durationSong.text = intent.getStringExtra("duration")
@@ -76,5 +101,67 @@ class PlayerActivity : AppCompatActivity() {
 //            .transform(RoundedCorners(8))
 //            .placeholder(R.drawable.placeholder_max)
 //            .into(cover)
+    }
+
+    private fun preparePlayer(url: String) {
+        mediaPlayer.setDataSource(url)
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener {
+            currentTime.text = "00:00"
+            play.isEnabled = true
+            playerState = STATE_PREPARED
+        }
+        mediaPlayer.setOnCompletionListener {
+            mediaPlayer.seekTo(0)
+            handler?.removeCallbacksAndMessages(null)
+            currentTime.text = "00:00"
+            play.setImageResource(R.drawable.button_play)
+            playerState = STATE_PREPARED
+        }
+    }
+
+    private fun startPlayer() {
+        mediaPlayer.start()
+        play.setImageResource(R.drawable.pause)
+        playerState = STATE_PLAYING
+        handler?.post(updateTimer())
+    }
+
+    private fun pausePlayer() {
+        mediaPlayer.pause()
+        play.setImageResource(R.drawable.button_play)
+        playerState = STATE_PAUSED
+        handler?.removeCallbacks(updateTimer())
+    }
+
+    private fun playbackControl() {
+        when(playerState) {
+            STATE_PLAYING -> {
+                pausePlayer()
+            }
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer()
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        pausePlayer()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer.release()
+        handler?.removeCallbacksAndMessages(null)
+    }
+
+    private fun updateTimer(): Runnable {
+        return object : Runnable {
+            override fun run() {
+                currentTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
+                handler?.postDelayed(this, PLAY_DELAY)
+            }
+        }
     }
 }
