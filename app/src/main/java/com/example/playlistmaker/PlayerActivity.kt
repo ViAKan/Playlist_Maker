@@ -34,6 +34,7 @@ class PlayerActivity : AppCompatActivity() {
     private var mediaPlayer = MediaPlayer()
     private var playerState = STATE_DEFAULT
     private val handler: Handler? = Handler(Looper.getMainLooper())
+    private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,42 +80,27 @@ class PlayerActivity : AppCompatActivity() {
             .into(cover)
 
         play = findViewById(R.id.buttonPlay)
-        currentTime.text = "00:00"
+        currentTime.text = getString(R.string.start)
         play.isEnabled = false
         val url = track.previewUrl
         preparePlayer(url)
         play.setOnClickListener {
             playbackControl()
         }
-//        title.text = intent.getStringExtra("name")
-//        author.text = intent.getStringExtra("author")
-//        durationSong.text = intent.getStringExtra("duration")
-//        currentTime.text = durationSong.text
-//        albumSong.text = intent.getStringExtra("album")
-//        yearSong.text = intent.getStringExtra("year")
-//        genreSong.text = intent.getStringExtra("genre")
-//        countrySong.text = intent.getStringExtra("country")
-//        imgSource = intent.getStringExtra("imageSrc").toString()
-//        Glide.with(applicationContext)
-//            .load(imgSource)
-//            .centerInside()
-//            .transform(RoundedCorners(8))
-//            .placeholder(R.drawable.placeholder_max)
-//            .into(cover)
     }
 
     private fun preparePlayer(url: String) {
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
-            currentTime.text = "00:00"
+            currentTime.text = getString(R.string.start)
             play.isEnabled = true
             playerState = STATE_PREPARED
         }
         mediaPlayer.setOnCompletionListener {
             mediaPlayer.seekTo(0)
             handler?.removeCallbacksAndMessages(null)
-            currentTime.text = "00:00"
+            currentTime.text = getString(R.string.start)
             play.setImageResource(R.drawable.button_play)
             playerState = STATE_PREPARED
         }
@@ -159,7 +145,7 @@ class PlayerActivity : AppCompatActivity() {
     private fun updateTimer(): Runnable {
         return object : Runnable {
             override fun run() {
-                currentTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
+                currentTime.text = dateFormat.format(mediaPlayer.currentPosition)
                 handler?.postDelayed(this, PLAY_DELAY)
             }
         }

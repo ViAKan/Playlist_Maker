@@ -180,11 +180,12 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
                     call: Call<TrackResponse>,
                     response: Response<TrackResponse>
                 ) {
-                    if (response.code() == 200) {
+                    val responseBody = response.body()?.results
+                    if (response.isSuccessful()) {
                         progressBar.visibility = View.GONE
                         recyclerView.visibility = View.VISIBLE
                         trackList.clear()
-                        if (response.body()?.results?.isNotEmpty() == true) {
+                        if (responseBody?.isNotEmpty() == true) {
                             trackList.addAll(response.body()?.results!!)
                             adapter.notifyDataSetChanged()
                         }
