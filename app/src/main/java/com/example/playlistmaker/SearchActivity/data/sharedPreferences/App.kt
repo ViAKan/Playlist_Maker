@@ -1,10 +1,9 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.SearchActivity.data.sharedPreferences
 
 import android.app.Application
-import android.content.res.Resources
-import android.widget.Switch
 import androidx.appcompat.app.AppCompatDelegate
-import com.google.android.material.switchmaterial.SwitchMaterial
+import com.example.playlistmaker.SettingsActivity.ui.THEME_KEY
+import com.example.playlistmaker.SettingsActivity.ui.THEME_PREFERENCES
 
 const val MODE = "mode"
 const val ISDARK = "isDark"

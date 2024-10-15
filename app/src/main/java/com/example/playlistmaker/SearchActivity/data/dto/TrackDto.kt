@@ -1,6 +1,6 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.SearchActivity.data.dto
 
-data class Track (
+data class TrackDto (
     val releaseDate: String,
     val primaryGenreName: String,
     val country: String,
