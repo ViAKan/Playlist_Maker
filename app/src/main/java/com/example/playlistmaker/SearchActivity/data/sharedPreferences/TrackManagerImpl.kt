@@ -43,7 +43,6 @@ class TrackManagerImpl(private val context: Context): TrackManager {
             .putString(HISTORY_KEY, Gson().toJson(historyList))
             .apply()
 
-        Log.d("HistLMan", historyList.toString())
     }
 
     override fun clearHistory() {

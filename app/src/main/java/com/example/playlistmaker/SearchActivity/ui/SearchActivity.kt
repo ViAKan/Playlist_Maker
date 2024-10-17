@@ -51,10 +51,8 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
     private lateinit var historyView: LinearLayout
     private lateinit var historyRecyclerView: RecyclerView
 
-//    private lateinit var historyList:ArrayList<Track>
     private lateinit var historyAdapter: TrackAdapter
-//    private var historyList:ArrayList<Track> = arrayListOf()
-//    private var historyAdapter: TrackAdapter = TrackAdapter(historyList, this)
+
 
     private val searchRunnable = Runnable { searchRequest() }
 
@@ -86,12 +84,10 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
 
         historyInteractor = Creator.provideHistoryInteractor(this)
 
-//        Log.d("HistLBef", historyList.toString())
         val historyList = historyInteractor.getHistoryFromSph()
         historyAdapter = TrackAdapter(historyList, this)
         historyAdapter.notifyDataSetChanged()
 
-        Log.d("HistLAft", historyList.toString())
 
         historyRecyclerView = findViewById<RecyclerView>(R.id.recyclerViewHistory)
         historyRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -253,7 +249,6 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
             historyAdapter.notifyDataSetChanged()
             historyRecyclerView.layoutManager = LinearLayoutManager(this)
             historyRecyclerView.adapter = historyAdapter
-            Log.d("HistLClick", historyList.toString())
         }
     }
 
