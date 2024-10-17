@@ -1,16 +1,13 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.SettingsActivity.ui
 
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageButton
-import android.widget.Switch
-import android.widget.TextView
-import androidx.appcompat.widget.SwitchCompat
+import com.example.playlistmaker.R
+import com.example.playlistmaker.SearchActivity.data.sharedPreferences.App
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 const val THEME_PREFERENCES = "theme_preferences"
