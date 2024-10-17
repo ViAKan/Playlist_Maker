@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -23,7 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.PlayerActivity.ui.PlayerActivity
 import com.example.playlistmaker.R
-import com.example.playlistmaker.SearchActivity.creator.Creator
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.SearchActivity.domain.sharedPrefs.HistoryInteractor
 import com.example.playlistmaker.SearchActivity.domain.models.Track
 import com.example.playlistmaker.SearchActivity.domain.api.TrackInteractor
@@ -47,9 +48,13 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
     private lateinit var updateBtn: Button
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
+    private lateinit var historyView: LinearLayout
+    private lateinit var historyRecyclerView: RecyclerView
 
-    private var historyList:ArrayList<Track> = arrayListOf()
-    var historyAdapter = TrackAdapter(historyList, this)
+//    private lateinit var historyList:ArrayList<Track>
+    private lateinit var historyAdapter: TrackAdapter
+//    private var historyList:ArrayList<Track> = arrayListOf()
+//    private var historyAdapter: TrackAdapter = TrackAdapter(historyList, this)
 
     private val searchRunnable = Runnable { searchRequest() }
 
@@ -63,7 +68,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        val historyView = findViewById<LinearLayout>(R.id.historyView)
+        historyView = findViewById<LinearLayout>(R.id.historyView)
         val btn_clear_hist = findViewById<AppCompatButton>(R.id.btn_clear_history)
         val backButton = findViewById<ImageButton>(R.id.buttonBack)
         inputEditText = findViewById(R.id.inputEditText)
@@ -81,10 +86,14 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
 
         historyInteractor = Creator.provideHistoryInteractor(this)
 
-        historyList = historyInteractor.getHistoryFromSph()
+//        Log.d("HistLBef", historyList.toString())
+        val historyList = historyInteractor.getHistoryFromSph()
         historyAdapter = TrackAdapter(historyList, this)
+        historyAdapter.notifyDataSetChanged()
 
-        val historyRecyclerView = findViewById<RecyclerView>(R.id.recyclerViewHistory)
+        Log.d("HistLAft", historyList.toString())
+
+        historyRecyclerView = findViewById<RecyclerView>(R.id.recyclerViewHistory)
         historyRecyclerView.layoutManager = LinearLayoutManager(this)
         historyRecyclerView.adapter = historyAdapter
 
@@ -238,9 +247,13 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
         if(clickDebounce()) {
             displayIntent.putExtra(NAME_TRACK, strTrack)
             startActivity(displayIntent)
-            historyInteractor.addInHistory(track, historyList)
+            historyInteractor.addInHistory(track)
+            val historyList = historyInteractor.getHistoryFromSph()
+            historyAdapter = TrackAdapter(historyList, this)
             historyAdapter.notifyDataSetChanged()
-
+            historyRecyclerView.layoutManager = LinearLayoutManager(this)
+            historyRecyclerView.adapter = historyAdapter
+            Log.d("HistLClick", historyList.toString())
         }
     }
 

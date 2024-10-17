@@ -2,6 +2,7 @@ package com.example.playlistmaker.SearchActivity.data.sharedPreferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import com.example.playlistmaker.SearchActivity.data.dto.TrackDto
 import com.example.playlistmaker.SearchActivity.domain.models.Track
@@ -14,6 +15,7 @@ import com.google.gson.reflect.TypeToken
 class TrackManagerImpl(private val context: Context): TrackManager {
 
     private var sharedPreferences = context.getSharedPreferences(HISTORY_PREFS, Context.MODE_PRIVATE)
+    var historyList: ArrayList<TrackDto> = getHistoryFromSph()
 
     override fun getHistoryFromSph(): ArrayList<TrackDto> {
         val type = object : TypeToken<ArrayList<TrackDto>>() {}.type
@@ -22,7 +24,7 @@ class TrackManagerImpl(private val context: Context): TrackManager {
         return Gson().fromJson(json, type)
     }
 
-    override fun addInHistory(track: TrackDto, historyList: ArrayList<TrackDto>) {
+    override fun addInHistory(track: TrackDto) {
 
         for (song in historyList) {
             if (track.trackId == song.trackId) {
@@ -41,11 +43,13 @@ class TrackManagerImpl(private val context: Context): TrackManager {
             .putString(HISTORY_KEY, Gson().toJson(historyList))
             .apply()
 
+        Log.d("HistLMan", historyList.toString())
     }
 
     override fun clearHistory() {
         sharedPreferences.edit()
             .clear()
             .apply()
+
     }
 }

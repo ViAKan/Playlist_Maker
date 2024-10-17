@@ -8,5 +8,5 @@ import com.example.playlistmaker.SearchActivity.ui.TrackAdapter
 interface TrackManager {
     fun getHistoryFromSph(): ArrayList<TrackDto>
     fun clearHistory()
-    fun addInHistory(track: TrackDto, historyList: ArrayList<TrackDto>)
+    fun addInHistory(track: TrackDto)
 }

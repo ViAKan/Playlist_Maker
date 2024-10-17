@@ -6,8 +6,8 @@ import com.example.playlistmaker.SearchActivity.domain.models.Track
 
 class HistoryInteractorImpl(val repository: TrackHistoryRepository): HistoryInteractor {
 
-    override fun addInHistory(track: Track, historyList: ArrayList<Track>) {
-        repository.addInHistory(track, historyList)
+    override fun addInHistory(track: Track) {
+        repository.addInHistory(track)
     }
 
     override fun clearHistory() {

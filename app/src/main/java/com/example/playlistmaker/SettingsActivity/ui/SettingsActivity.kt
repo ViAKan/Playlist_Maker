@@ -7,7 +7,8 @@ import android.os.Bundle
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import com.example.playlistmaker.R
-import com.example.playlistmaker.SearchActivity.data.sharedPreferences.App
+import com.example.playlistmaker.App.App
+import com.example.playlistmaker.SettingsActivity.data.impl.SwitchThemeRepositoryImpl
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 const val THEME_PREFERENCES = "theme_preferences"
@@ -57,15 +58,18 @@ class SettingsActivity : AppCompatActivity() {
         }
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.switcher)
         val sharedPrefs = getSharedPreferences(THEME_PREFERENCES, MODE_PRIVATE)
-        val key = sharedPrefs.getBoolean(THEME_KEY, (applicationContext as App).darkTheme)
+//        val key = sharedPrefs.getBoolean(THEME_KEY, (applicationContext as App).darkTheme)
+        val switcherr = SwitchThemeRepositoryImpl(this)
+        val key = switcherr.key
         themeSwitcher.setChecked(key)
-        (applicationContext as App).switchTheme(key)
+        switcherr.switchTheme(key)
         themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
-            (applicationContext as App).switchTheme(checked)
+            switcherr.switchTheme(checked)
+            switcherr.saveTheme(checked)
 
-            sharedPrefs.edit()
-                    .putBoolean(THEME_KEY, checked)
-                    .apply()
+//            sharedPrefs.edit()
+//                    .putBoolean(THEME_KEY, checked)
+//                    .apply()
         }
     }
 }

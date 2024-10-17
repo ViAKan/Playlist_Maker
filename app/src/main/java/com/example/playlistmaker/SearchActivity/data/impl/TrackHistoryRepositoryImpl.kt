@@ -19,7 +19,7 @@ class TrackHistoryRepositoryImpl(val trackManager: TrackManager): TrackHistoryRe
         trackManager.clearHistory()
     }
 
-    override fun addInHistory(track: Track, historyList: ArrayList<Track>) {
-        trackManager.addInHistory(track.toTrackDto(), historyList.map{it.toTrackDto()} as ArrayList<TrackDto>)
+    override fun addInHistory(track: Track) {
+        trackManager.addInHistory(track.toTrackDto())
     }
 }
