@@ -11,6 +11,9 @@ import com.example.playlistmaker.SearchActivity.domain.api.TrackInteractor
 import com.example.playlistmaker.SearchActivity.domain.api.TrackRepository
 import com.example.playlistmaker.SearchActivity.domain.impl.TrackInteractorImpl
 import com.example.playlistmaker.SearchActivity.ui.TrackAdapter
+import com.example.playlistmaker.SettingsActivity.data.impl.SwitchThemeRepositoryImpl
+import com.example.playlistmaker.SettingsActivity.domain.impl.SwitchThemeInteractorImpl
+import com.example.playlistmaker.SettingsActivity.domain.sharedPrefs.SwitchThemeInteractor
 
 object Creator {
     private fun getTrackRepository(): TrackRepository {
@@ -23,5 +26,9 @@ object Creator {
 
     fun provideHistoryInteractor(context: Context): HistoryInteractor {
         return HistoryInteractorImpl(TrackHistoryRepositoryImpl(TrackManagerImpl(context)))
+    }
+
+    fun provideSwitcherInteractor(context: Context): SwitchThemeInteractor{
+        return SwitchThemeInteractorImpl(SwitchThemeRepositoryImpl(context))
     }
 }

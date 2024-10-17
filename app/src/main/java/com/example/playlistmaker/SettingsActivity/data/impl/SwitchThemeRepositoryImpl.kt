@@ -32,4 +32,8 @@ class SwitchThemeRepositoryImpl(val context: Context): SwitchThemeRepository {
             .apply()
 
     }
+
+    override fun getSwitchKey(): Boolean {
+        return key
+    }
 }
