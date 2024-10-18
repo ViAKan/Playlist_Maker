@@ -1,40 +1,42 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.player.ui
 
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.R
+import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.search.ui.NAME_TRACK
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-private const val STATE_DEFAULT = 0
-private const val STATE_PREPARED = 1
-private const val STATE_PLAYING = 2
-private const val STATE_PAUSED = 3
-private const val PLAY_DELAY = 300L
-
 class PlayerActivity : AppCompatActivity() {
+
+    companion object{
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+        private const val PLAY_DELAY = 300L
+    }
 
     private lateinit var play: ImageButton
     private lateinit var currentTime: TextView
-    private var mediaPlayer = MediaPlayer()
     private var playerState = STATE_DEFAULT
     private val handler: Handler? = Handler(Looper.getMainLooper())
     private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
+    private val player = Creator.providePlayerInteractor()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,38 +85,21 @@ class PlayerActivity : AppCompatActivity() {
         currentTime.text = getString(R.string.start)
         play.isEnabled = false
         val url = track.previewUrl
-        preparePlayer(url)
+        player.preparePlayer(url, { prepareListener() }, { completeListener() })
         play.setOnClickListener {
             playbackControl()
         }
     }
 
-    private fun preparePlayer(url: String) {
-        mediaPlayer.setDataSource(url)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            currentTime.text = getString(R.string.start)
-            play.isEnabled = true
-            playerState = STATE_PREPARED
-        }
-        mediaPlayer.setOnCompletionListener {
-            mediaPlayer.seekTo(0)
-            handler?.removeCallbacksAndMessages(null)
-            currentTime.text = getString(R.string.start)
-            play.setImageResource(R.drawable.button_play)
-            playerState = STATE_PREPARED
-        }
-    }
-
     private fun startPlayer() {
-        mediaPlayer.start()
+        player.startPlayer()
         play.setImageResource(R.drawable.pause)
         playerState = STATE_PLAYING
         handler?.post(updateTimer())
     }
 
     private fun pausePlayer() {
-        mediaPlayer.pause()
+        player.pausePlayer()
         play.setImageResource(R.drawable.button_play)
         playerState = STATE_PAUSED
         handler?.removeCallbacks(updateTimer())
@@ -138,16 +123,29 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release()
+        player.releasePlayer()
         handler?.removeCallbacksAndMessages(null)
     }
 
     private fun updateTimer(): Runnable {
         return object : Runnable {
             override fun run() {
-                currentTime.text = dateFormat.format(mediaPlayer.currentPosition)
+                currentTime.text = dateFormat.format(player.getCurrentPosition())
                 handler?.postDelayed(this, PLAY_DELAY)
             }
         }
+    }
+
+    private fun prepareListener(){
+        currentTime.text = getString(R.string.start)
+        play.isEnabled = true
+        playerState = STATE_PREPARED
+    }
+
+    private fun completeListener(){
+        handler?.removeCallbacksAndMessages(null)
+        currentTime.text = getString(R.string.start)
+        play.setImageResource(R.drawable.button_play)
+        playerState = STATE_PREPARED
     }
 }
