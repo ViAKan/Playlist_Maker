@@ -2,13 +2,12 @@ package com.example.playlistmaker.SettingsActivity.ui
 
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import androidx.appcompat.app.AppCompatActivity
 import com.example.playlistmaker.R
-import com.example.playlistmaker.App.App
-import com.example.playlistmaker.SettingsActivity.data.impl.SwitchThemeRepositoryImpl
+import com.example.playlistmaker.app.App
 import com.example.playlistmaker.creator.Creator
 import com.google.android.material.switchmaterial.SwitchMaterial
 
@@ -59,7 +58,7 @@ class SettingsActivity : AppCompatActivity() {
         }
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.switcher)
 
-        val switcherInt = Creator.provideSwitcherInteractor(this)
+        val switcherInt = Creator.provideSwitcherInteractor()
         val key = switcherInt.getSwitchKey()
         themeSwitcher.setChecked(key)
         switcherInt.switchTheme(key)

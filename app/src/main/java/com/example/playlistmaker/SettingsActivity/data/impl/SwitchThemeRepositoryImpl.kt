@@ -1,9 +1,7 @@
 package com.example.playlistmaker.SettingsActivity.data.impl
 
-import android.app.Application.MODE_PRIVATE
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.App.App
 import com.example.playlistmaker.SettingsActivity.domain.sharedPrefs.SwitchThemeRepository
 import com.example.playlistmaker.SettingsActivity.ui.THEME_KEY
 import com.example.playlistmaker.SettingsActivity.ui.THEME_PREFERENCES
