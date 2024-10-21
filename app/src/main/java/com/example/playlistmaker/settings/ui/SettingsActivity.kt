@@ -1,16 +1,14 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.settings.ui
 
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageButton
-import android.widget.Switch
-import android.widget.TextView
-import androidx.appcompat.widget.SwitchCompat
+import androidx.appcompat.app.AppCompatActivity
+import com.example.playlistmaker.R
+import com.example.playlistmaker.app.App
+import com.example.playlistmaker.creator.Creator
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 const val THEME_PREFERENCES = "theme_preferences"
@@ -59,16 +57,15 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(agreeIntent)
         }
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.switcher)
-        val sharedPrefs = getSharedPreferences(THEME_PREFERENCES, MODE_PRIVATE)
-        val key = sharedPrefs.getBoolean(THEME_KEY, (applicationContext as App).darkTheme)
-        themeSwitcher.setChecked(key)
-        (applicationContext as App).switchTheme(key)
-        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
-            (applicationContext as App).switchTheme(checked)
 
-            sharedPrefs.edit()
-                    .putBoolean(THEME_KEY, checked)
-                    .apply()
+        val switcherInt = Creator.provideSwitcherInteractor()
+        val key = switcherInt.getSwitchKey()
+        themeSwitcher.setChecked(key)
+        switcherInt.switchTheme(key)
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            switcherInt.switchTheme(checked)
+            switcherInt.saveTheme(checked)
+
         }
     }
 }

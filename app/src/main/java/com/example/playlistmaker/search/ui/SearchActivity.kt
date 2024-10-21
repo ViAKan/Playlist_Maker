@@ -1,15 +1,12 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.search.ui
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.text.method.TextKeyListener.clear
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -21,20 +18,18 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.R
+import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.player.ui.PlayerActivity
+import com.example.playlistmaker.search.domain.api.TrackInteractor
+import com.example.playlistmaker.search.domain.historyInteractor.HistoryInteractor
+import com.example.playlistmaker.search.domain.models.ConsumerData
+import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 const val HISTORY_PREFS = "history_prefs"
 const val HISTORY_KEY = "key_for_hist"
@@ -44,12 +39,6 @@ private const val CLICK_DEBOUNCE_DELAY = 1000L
 
 class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
     private var searchQuery: CharSequence? = null
-    private val baseUrl = "https://itunes.apple.com"
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val trackService = retrofit.create(iTunesApi::class.java)
     private val trackList = ArrayList<Track>()
     val adapter = TrackAdapter(trackList, this)
     private lateinit var placeholderMessage: TextView
@@ -59,24 +48,25 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
     private lateinit var updateBtn: Button
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
+    private lateinit var historyView: LinearLayout
+    private lateinit var historyRecyclerView: RecyclerView
 
-    private var historyList:ArrayList<Track> = arrayListOf()
-    var historyAdapter = TrackAdapter(historyList, this)
-
-    private lateinit var changeListener: SharedPreferences.OnSharedPreferenceChangeListener
-    private lateinit var sharedPreferences: SharedPreferences
-
-    private val searchHist = SearchHistory()
+    private lateinit var historyAdapter: TrackAdapter
+    private lateinit var historyList: ArrayList<Track>
 
     private val searchRunnable = Runnable { searchRequest() }
 
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
 
+    private val provideTrackInteractor = Creator.provideTrackInteractor()
+
+    private lateinit var historyInteractor: HistoryInteractor
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        val historyView = findViewById<LinearLayout>(R.id.historyView)
+        historyView = findViewById<LinearLayout>(R.id.historyView)
         val btn_clear_hist = findViewById<AppCompatButton>(R.id.btn_clear_history)
         val backButton = findViewById<ImageButton>(R.id.buttonBack)
         inputEditText = findViewById(R.id.inputEditText)
@@ -92,34 +82,23 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
 
         historyView.visibility = View.GONE
 
-        sharedPreferences = getSharedPreferences(HISTORY_PREFS, MODE_PRIVATE)
-        historyList = searchHist.getHistoryFromSpH(sharedPreferences)
-        historyAdapter = TrackAdapter(historyList, this)
+        historyInteractor = Creator.provideHistoryInteractor()
 
-        val historyRecyclerView = findViewById<RecyclerView>(R.id.recyclerViewHistory)
-        historyRecyclerView.layoutManager = LinearLayoutManager(this)
-        historyRecyclerView.adapter = historyAdapter
+        historyList = historyInteractor.getHistoryFromSph()
+        historyAdapter = TrackAdapter(historyList, this)
         historyAdapter.notifyDataSetChanged()
 
-        changeListener =
-            SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-                if (key == HISTORY_KEY) {
-                    val track = sharedPreferences?.getString(HISTORY_KEY, null)
-                    if (track != null) {
-                        historyAdapter.notifyItemInserted(0)
-                    }
-                }
-            }
-
-        sharedPreferences.registerOnSharedPreferenceChangeListener(changeListener)
+        Log.d("beforeclear", historyList.toString())
+        historyRecyclerView = findViewById<RecyclerView>(R.id.recyclerViewHistory)
+        historyRecyclerView.layoutManager = LinearLayoutManager(this)
+        historyRecyclerView.adapter = historyAdapter
 
         btn_clear_hist.setOnClickListener{
             historyView.visibility = View.GONE
             historyList.clear()
+            historyInteractor.clearHistory()
             historyAdapter.notifyDataSetChanged()
-            sharedPreferences.edit()
-                .clear()
-                .apply()
+            Log.d("clear", historyList.toString())
         }
 
         backButton.setOnClickListener {
@@ -174,42 +153,37 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
 
     private fun searchRequest(){
         if (inputEditText.text.isNotEmpty()) {
-            trackService.search(inputEditText.text.toString()).enqueue(object :
-                Callback<TrackResponse> {
-                override fun onResponse(
-                    call: Call<TrackResponse>,
-                    response: Response<TrackResponse>
-                ) {
-                    val responseBody = response.body()?.results
-                    if (response.isSuccessful()) {
-                        progressBar.visibility = View.GONE
-                        recyclerView.visibility = View.VISIBLE
-                        trackList.clear()
-                        if (responseBody?.isNotEmpty() == true) {
-                            trackList.addAll(response.body()?.results!!)
-                            adapter.notifyDataSetChanged()
-                        }
-                        if (trackList.isEmpty()) {
-                            showMessage(getString(R.string.nothing_found), "")
-                        } else {
-                            showMessage("", "")
-                        }
-                    } else {
-                        showMessage(
-                            getString(R.string.something_went_wrong),
-                            getString(R.string.additional_message)
-                        )
-                        updateBtn.visibility = View.VISIBLE
-                    }
-                }
+            provideTrackInteractor.search(inputEditText.text.toString(),object: TrackInteractor.TrackConsumer<List<Track>?> {
+                override fun consume(data: ConsumerData<List<Track>?>) {
+                    handler.post {
+                        when (data) {
+                            is ConsumerData.Data -> {
+                                progressBar.visibility = View.GONE
+                                recyclerView.visibility = View.VISIBLE
+                                trackList.clear()
+                                val results = data.data
+                                if (results!!.isNotEmpty()) {
+                                    trackList.addAll(results)
+                                    adapter.notifyDataSetChanged()
+                                }
+                                if (results.isEmpty()) {
+                                    showMessage(getString(R.string.nothing_found), "")
+                                } else {
+                                    showMessage("", "")
+                                }
+                            }
 
-                override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                    progressBar.visibility = View.GONE
-                    showMessage(
-                        getString(R.string.something_went_wrong),
-                        getString(R.string.additional_message)
-                    )
-                    updateBtn.visibility = View.VISIBLE
+                            is ConsumerData.Error -> {
+                                progressBar.visibility = View.GONE
+                                showMessage(
+                                    getString(R.string.something_went_wrong),
+                                    getString(R.string.additional_message)
+                                )
+                                updateBtn.visibility = View.VISIBLE
+                            }
+
+                        }
+                    }
                 }
 
             })
@@ -270,29 +244,13 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
         if(clickDebounce()) {
             displayIntent.putExtra(NAME_TRACK, strTrack)
             startActivity(displayIntent)
-
-            sharedPreferences = getSharedPreferences(HISTORY_PREFS, MODE_PRIVATE)
-
-            for (song in historyList) {
-                if (track.trackId == song.trackId) {
-                    historyList.remove(song)
-                    historyAdapter.notifyDataSetChanged()
-                    break
-                }
-            }
-            if (historyList.size < 10) {
-                historyList.add(0, track)
-                historyAdapter.notifyDataSetChanged()
-            } else {
-                historyList.removeAt(9)
-                historyList.add(0, track)
-                historyAdapter.notifyDataSetChanged()
-            }
-
-            sharedPreferences.edit()
-                .putString(HISTORY_KEY, searchHist.createJsonFromTrack(historyList))
-                .apply()
-
+            historyInteractor.addInHistory(track)
+            historyList = historyInteractor.getHistoryFromSph()
+            historyAdapter = TrackAdapter(historyList, this)
+            historyAdapter.notifyDataSetChanged()
+            historyRecyclerView.layoutManager = LinearLayoutManager(this)
+            historyRecyclerView.adapter = historyAdapter
+            Log.d("add", historyList.toString())
         }
     }
 
