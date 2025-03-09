@@ -1,10 +1,10 @@
-package com.example.playlistmaker.SettingsActivity.data.impl
+package com.example.playlistmaker.settings.data.impl
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.SettingsActivity.domain.sharedPrefs.SwitchThemeRepository
-import com.example.playlistmaker.SettingsActivity.ui.THEME_KEY
-import com.example.playlistmaker.SettingsActivity.ui.THEME_PREFERENCES
+import com.example.playlistmaker.settings.domain.sharedPrefs.SwitchThemeRepository
+import com.example.playlistmaker.settings.ui.THEME_KEY
+import com.example.playlistmaker.settings.ui.THEME_PREFERENCES
 
 class SwitchThemeRepositoryImpl(val context: Context): SwitchThemeRepository {
 

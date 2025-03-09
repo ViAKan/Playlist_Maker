@@ -1,4 +1,4 @@
-package com.example.playlistmaker.SettingsActivity.domain.sharedPrefs
+package com.example.playlistmaker.settings.domain.sharedPrefs
 
 interface SwitchThemeRepository {
     fun switchTheme(darkThemeEnabled: Boolean)

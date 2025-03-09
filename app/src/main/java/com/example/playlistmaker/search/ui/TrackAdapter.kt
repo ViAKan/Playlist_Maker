@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.ui
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -7,11 +8,9 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.models.Track
 
 class TrackAdapter (
-    private val tracks: List<Track>,
+    private var tracks: List<Track>,
     val listener: Listener
 ) : RecyclerView.Adapter<TrackViewHolder> () {
-
-    val historyList: MutableList<Track> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.track_view, parent, false)
@@ -25,6 +24,12 @@ class TrackAdapter (
     }
     override fun getItemCount(): Int {
         return tracks.size
+    }
+
+    fun updateTracks(newTracks: List<Track>) {
+        tracks = newTracks
+        Log.d("clearTr", tracks.toString())
+        notifyDataSetChanged()
     }
 
     interface Listener{
