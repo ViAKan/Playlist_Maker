@@ -61,9 +61,6 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
 
-//    private val provideTrackInteractor = Creator.provideTrackInteractor()
-
-    private lateinit var historyInteractor: HistoryInteractor
     private lateinit var searchViewModel: SearchViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,14 +82,10 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
 
         historyView.visibility = View.GONE
 
-        historyInteractor = Creator.provideHistoryInteractor()
-        searchViewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory(historyInteractor))[SearchViewModel::class.java]
+        searchViewModel = ViewModelProvider(this)[SearchViewModel::class.java]
 
-//        historyList = historyInteractor.getHistoryFromSph()
-//        historyList = searchViewModel.getHistory()
         historyList = ArrayList()
         historyAdapter = TrackAdapter(historyList, this)
-//        historyAdapter.notifyDataSetChanged()
 
         Log.d("beforeclear", historyList.toString())
         historyRecyclerView = findViewById<RecyclerView>(R.id.recyclerViewHistory)
@@ -130,14 +123,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
 
         btn_clear_hist.setOnClickListener{
             historyView.visibility = View.GONE
-//            historyList.clear()
             searchViewModel.clearHistory()
-//            historyAdapter.updateTracks(emptyList())
-//            historyList.clear()
-//            historyList.addAll(searchViewModel.getHistory())
-//            historyInteractor.clearHistory()
-//            historyAdapter.notifyDataSetChanged()
-//            historyAdapter.updateTracks(emptyList())
             Log.d("clear", historyList.toString())
         }
 
@@ -148,11 +134,6 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
         clearButton.setOnClickListener {
             trackList.clear()
             hide()
-//            recyclerView.visibility = View.GONE
-//            placeholderMessage.visibility = View.GONE
-//            placeholderImg.visibility = View.GONE
-//            additionalMes.visibility = View.GONE
-//            updateBtn.visibility = View.GONE
             inputEditText.setText("")
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -249,16 +230,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
         if(clickDebounce()) {
             displayIntent.putExtra(NAME_TRACK, strTrack)
             startActivity(displayIntent)
-//            historyInteractor.addInHistory(track)
-//            historyList = historyInteractor.getHistoryFromSph()
             searchViewModel.addTrackToHistory(track)
-//            historyList.clear()
-//            historyList.addAll(searchViewModel.getHistory())
-//            historyAdapter.updateTracks(historyList)
-//            historyAdapter = TrackAdapter(historyList, this)
-//            historyAdapter.notifyDataSetChanged()
-//            historyRecyclerView.layoutManager = LinearLayoutManager(this)
-//            historyRecyclerView.adapter = historyAdapter
             Log.d("cleadd", historyList.toString())
         }
     }

@@ -17,7 +17,7 @@ import com.example.playlistmaker.search.domain.models.SearchScreenState
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.SEARCH_DEBOUNCE_DELAY
 
-class SearchViewModel(private val historyInteractor: HistoryInteractor) : ViewModel() {
+class SearchViewModel() : ViewModel() {
 
     private var searchRunnable: Runnable? = null
     private val handler = Handler(Looper.getMainLooper())
@@ -27,6 +27,7 @@ class SearchViewModel(private val historyInteractor: HistoryInteractor) : ViewMo
     fun getScreenState(): LiveData<SearchScreenState> = _screenState
 
     private val trackInteractor = Creator.provideTrackInteractor()
+    private val historyInteractor: HistoryInteractor = Creator.provideHistoryInteractor()
 
     fun search(query: String) {
         trackInteractor.search(query, object : TrackInteractor.TrackConsumer<List<Track>?> {
@@ -94,15 +95,15 @@ class SearchViewModel(private val historyInteractor: HistoryInteractor) : ViewMo
         Log.d("SearchViewModel", "Track added to history: ${track.trackName}")
     }
 
-    companion object {
-        fun getViewModelFactory(historyInteractor: HistoryInteractor): ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return SearchViewModel(
-                        historyInteractor
-                    ) as T
-                }
-            }
-    }
+//    companion object {
+//        fun getViewModelFactory(historyInteractor: HistoryInteractor): ViewModelProvider.Factory =
+//            object : ViewModelProvider.Factory {
+//                @Suppress("UNCHECKED_CAST")
+//                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+//                    return SearchViewModel(
+//                        historyInteractor
+//                    ) as T
+//                }
+//            }
+//    }
 }

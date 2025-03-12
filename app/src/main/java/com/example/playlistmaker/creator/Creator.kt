@@ -42,12 +42,7 @@ object Creator {
             application))
     }
 
-//    fun provideNavigator(context: Context): ExternalNavigator{
-//        return ExternalNavigatorImpl(context)
-//    }
-
-
-        fun provideSwitcherInteractor(): SwitchThemeInteractor{
+    fun provideSwitcherInteractor(): SwitchThemeInteractor{
         return SwitchThemeInteractorImpl(SwitchThemeRepositoryImpl(application))
     }
 

@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.search.domain.models.SearchScreenState
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -16,18 +17,12 @@ class PlayerViewModel: ViewModel() {
     private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
     private val handler: Handler? = Handler(Looper.getMainLooper())
 
-    private val _currentTime = MutableLiveData<String>()
-    private val _playerState = MutableLiveData<Int>()
-    private val _isPlayEnabled = MutableLiveData<Boolean>()
+    private val playerState = MutableLiveData<PlayerState>()
 
-    fun getTime(): LiveData<String> = _currentTime
-    fun getPlayerState(): LiveData<Int> = _playerState
-    fun getPlayEnabled(): LiveData<Boolean> = _isPlayEnabled
+    fun getState(): LiveData<PlayerState> = playerState
 
     init {
-        _playerState.value = STATE_DEFAULT
-        _currentTime.value = "00:00"
-        _isPlayEnabled.value = false
+        playerState.value = PlayerState(currentTime = "00:00", state = STATE_DEFAULT, isPlayEnabled = false)
     }
 
     fun preparePlayer(url: String) {
@@ -35,7 +30,7 @@ class PlayerViewModel: ViewModel() {
     }
 
     fun playbackControl() {
-        when (_playerState.value) {
+        when (playerState.value?.state) {
             STATE_PLAYING -> pausePlayer()
             STATE_PREPARED, STATE_PAUSED -> startPlayer()
         }
@@ -43,32 +38,29 @@ class PlayerViewModel: ViewModel() {
 
     private fun startPlayer() {
         player.startPlayer()
-        _playerState.value = STATE_PLAYING
+        playerState.value = playerState.value?.copy(state = STATE_PLAYING)
         handler?.post(updateTimer())
     }
 
     fun pausePlayer() {
         player.pausePlayer()
-        _playerState.value = STATE_PAUSED
+        playerState.value = playerState.value?.copy(state = STATE_PAUSED)
         handler?.removeCallbacks(updateTimer())
     }
 
     private fun onPrepare() {
-        _currentTime.value = "00:00"
-        _isPlayEnabled.value = true
-        _playerState.value = STATE_PREPARED
+        playerState.value = PlayerState(currentTime = "00:00", state = STATE_PREPARED, isPlayEnabled = true)
     }
 
     private fun onComplete() {
         handler?.removeCallbacksAndMessages(null)
-        _currentTime.value = "00:00"
-        _playerState.value = STATE_PREPARED
+        playerState.value = playerState.value?.copy(currentTime = "00:00", state = STATE_PREPARED)
     }
 
     private fun updateTimer(): Runnable {
         return object : Runnable {
             override fun run() {
-                _currentTime.value = dateFormat.format(player.getCurrentPosition())
+                playerState.value = playerState.value?.copy(currentTime = dateFormat.format(player.getCurrentPosition()))
                 handler?.postDelayed(this, PLAY_DELAY)
             }
         }

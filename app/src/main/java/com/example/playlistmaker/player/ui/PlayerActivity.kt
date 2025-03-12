@@ -79,16 +79,10 @@ class PlayerActivity : AppCompatActivity() {
             playerViewModel.playbackControl()
         }
 
-        playerViewModel.getTime().observe(this) { time ->
-            currentTime.text = time
-        }
-
-        playerViewModel.getPlayEnabled().observe(this) { isEnabled ->
-            play.isEnabled = isEnabled
-        }
-
-        playerViewModel.getPlayerState().observe(this) { state ->
-            when (state) {
+        playerViewModel.getState().observe(this){ state ->
+            currentTime.text = state.currentTime
+            play.isEnabled = state.isPlayEnabled
+            when (state.state) {
                 PlayerViewModel.STATE_PLAYING -> play.setImageResource(R.drawable.pause)
                 PlayerViewModel.STATE_PAUSED, PlayerViewModel.STATE_PREPARED -> play.setImageResource(R.drawable.button_play)
             }

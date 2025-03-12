@@ -1,8 +1,5 @@
 package com.example.playlistmaker.sharing.domain.impl
 
-import android.provider.Settings.Global.getString
-import com.example.playlistmaker.R
-import com.example.playlistmaker.sharing.EmailDataMapper
 import com.example.playlistmaker.sharing.data.navigator.ExternalNavigatorImpl
 import com.example.playlistmaker.sharing.data.resources.ResourceProviderImpl
 import com.example.playlistmaker.sharing.domain.model.EmailData
