@@ -22,6 +22,8 @@ class TrackManagerImpl(private val context: Context): TrackManager {
 
     override fun addInHistory(track: TrackDto) {
 
+        historyList = getHistoryFromSph()
+
         for (song in historyList) {
             if (track.trackId == song.trackId) {
                 historyList.remove(song)
@@ -47,7 +49,7 @@ class TrackManagerImpl(private val context: Context): TrackManager {
         sharedPreferences.edit()
             .clear()
             .apply()
-        Log.d("clear1", historyList.toString())
+        Log.d("clear1", getHistoryFromSph().toString())
 
     }
 }
