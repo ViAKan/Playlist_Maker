@@ -1,7 +1,7 @@
 package com.example.playlistmaker.settings.domain.impl
 
-import com.example.playlistmaker.settings.domain.themeSwitcher.SwitchThemeInteractor
-import com.example.playlistmaker.settings.domain.themeSwitcher.SwitchThemeRepository
+import com.example.playlistmaker.settings.domain.sharedPrefs.SwitchThemeInteractor
+import com.example.playlistmaker.settings.domain.sharedPrefs.SwitchThemeRepository
 
 class SwitchThemeInteractorImpl(val repository: SwitchThemeRepository): SwitchThemeInteractor{
 
