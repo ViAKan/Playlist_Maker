@@ -1,6 +1,7 @@
 package com.example.playlistmaker.search.data.sharedPreferences
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import com.example.playlistmaker.search.data.dto.TrackDto
 import com.example.playlistmaker.search.ui.HISTORY_KEY
@@ -8,16 +9,16 @@ import com.example.playlistmaker.search.ui.HISTORY_PREFS
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class TrackManagerImpl(private val context: Context): TrackManager {
+class TrackManagerImpl(private var sharedPreferences: SharedPreferences, private val gson: Gson): TrackManager {
 
-    private var sharedPreferences = context.getSharedPreferences(HISTORY_PREFS, Context.MODE_PRIVATE)
+//    private var sharedPreferences = context.getSharedPreferences(HISTORY_PREFS, Context.MODE_PRIVATE)
     var historyList: ArrayList<TrackDto> = getHistoryFromSph()
 
     override fun getHistoryFromSph(): ArrayList<TrackDto> {
         val type = object : TypeToken<ArrayList<TrackDto>>() {}.type
         val json = sharedPreferences.getString(HISTORY_KEY, null)
             ?: return ArrayList()
-        return Gson().fromJson(json, type)
+        return gson.fromJson(json, type)
     }
 
     override fun addInHistory(track: TrackDto) {
@@ -38,7 +39,7 @@ class TrackManagerImpl(private val context: Context): TrackManager {
         }
 
         sharedPreferences.edit()
-            .putString(HISTORY_KEY, Gson().toJson(historyList))
+            .putString(HISTORY_KEY, gson.toJson(historyList))
             .apply()
 
         Log.d("add1", historyList.toString())

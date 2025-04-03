@@ -1,12 +1,14 @@
 package com.example.playlistmaker.sharing.domain.impl
 
 import com.example.playlistmaker.sharing.data.navigator.ExternalNavigatorImpl
+import com.example.playlistmaker.sharing.data.resources.ResourceProvider
 import com.example.playlistmaker.sharing.data.resources.ResourceProviderImpl
 import com.example.playlistmaker.sharing.domain.model.EmailData
+import com.example.playlistmaker.sharing.domain.share.ExternalNavigator
 import com.example.playlistmaker.sharing.domain.share.SharingInteractor
 
 class SharingInteractorImpl(
-    private val externalNavigator: ExternalNavigatorImpl, private val resourceProvider: ResourceProviderImpl
+    private val externalNavigator: ExternalNavigator, private val resourceProvider: ResourceProvider
 ) : SharingInteractor {
 
     override fun shareApp() {

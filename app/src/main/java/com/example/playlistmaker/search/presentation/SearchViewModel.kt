@@ -17,7 +17,7 @@ import com.example.playlistmaker.search.domain.models.SearchScreenState
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.SEARCH_DEBOUNCE_DELAY
 
-class SearchViewModel() : ViewModel() {
+class SearchViewModel(private val trackInteractor: TrackInteractor, private val historyInteractor: HistoryInteractor) : ViewModel() {
 
     private var searchRunnable: Runnable? = null
     private val handler = Handler(Looper.getMainLooper())
@@ -26,8 +26,8 @@ class SearchViewModel() : ViewModel() {
 
     fun getScreenState(): LiveData<SearchScreenState> = _screenState
 
-    private val trackInteractor = Creator.provideTrackInteractor()
-    private val historyInteractor: HistoryInteractor = Creator.provideHistoryInteractor()
+//    private val trackInteractor = Creator.provideTrackInteractor()
+//    private val historyInteractor: HistoryInteractor = Creator.provideHistoryInteractor()
 
     fun search(query: String) {
         trackInteractor.search(query, object : TrackInteractor.TrackConsumer<List<Track>?> {

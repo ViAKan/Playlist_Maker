@@ -6,14 +6,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.player.domain.mediaplayer.PlayerInteractor
 import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.search.domain.models.SearchScreenState
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class PlayerViewModel: ViewModel() {
+class PlayerViewModel(private val player: PlayerInteractor): ViewModel() {
 
-    private val player = Creator.providePlayerInteractor()
+//    private val player = Creator.providePlayerInteractor()
     private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
     private val handler: Handler? = Handler(Looper.getMainLooper())
 
