@@ -8,15 +8,15 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
 import com.example.playlistmaker.settings.presentation.SettingsViewModel
 import com.google.android.material.switchmaterial.SwitchMaterial
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 const val THEME_PREFERENCES = "theme_preferences"
 const val THEME_KEY = "key_for_theme"
 
 class SettingsActivity : AppCompatActivity() {
 
-    private val settingsViewModel by lazy{
-        ViewModelProvider(this)[SettingsViewModel::class.java]
-    }
+    private val settingsViewModel by viewModel<SettingsViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings2)

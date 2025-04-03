@@ -33,6 +33,7 @@ import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.example.playlistmaker.settings.presentation.SettingsViewModel
 import com.google.gson.Gson
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 const val HISTORY_PREFS = "history_prefs"
 const val HISTORY_KEY = "key_for_hist"
@@ -61,7 +62,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
 
-    private lateinit var searchViewModel: SearchViewModel
+    private val searchViewModel by viewModel<SearchViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +83,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.Listener {
 
         historyView.visibility = View.GONE
 
-        searchViewModel = ViewModelProvider(this)[SearchViewModel::class.java]
+//        searchViewModel = ViewModelProvider(this)[SearchViewModel::class.java]
 
         historyList = ArrayList()
         historyAdapter = TrackAdapter(historyList, this)
