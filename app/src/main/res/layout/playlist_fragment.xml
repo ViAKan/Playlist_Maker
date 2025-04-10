@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:theme="@style/Theme.PlaylistMaker">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_new_playlist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="14dp"
+            android:layout_marginTop="24dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/btn_clear_hist"
+            android:backgroundTint="?attr/colorOnPrimary"
+            android:text="@string/btn_new_playlist"
+            android:textAlignment="center"
+            android:textSize="14sp"
+            android:fontFamily="@font/ys_display_medium"
+            android:textFontWeight="500"
+            android:textColor="?attr/colorPrimaryVariant"
+            android:textAllCaps="false"
+            android:visibility="visible"
+            android:clickable="true"/>
+    </FrameLayout>
+
+
+    <ImageView
+        android:id="@+id/placeholder_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/nothing_found_img"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp"/>
+
+    <TextView android:id="@+id/mediaState"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/media"
+        android:textAlignment="center"
+        android:textSize="19sp"
+        android:fontFamily="@font/ys_display_medium"
+        android:textFontWeight="400"
+        android:textColor="?attr/colorOnPrimary"/>
+
+</LinearLayout>
