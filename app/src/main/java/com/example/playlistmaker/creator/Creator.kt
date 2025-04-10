@@ -16,42 +16,61 @@ import com.example.playlistmaker.settings.domain.sharedPrefs.SwitchThemeInteract
 import com.example.playlistmaker.player.data.impl.PlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.player.domain.mediaplayer.PlayerInteractor
+import com.example.playlistmaker.player.domain.mediaplayer.PlayerRepository
+import com.example.playlistmaker.search.data.NetworkClient
+import com.example.playlistmaker.search.data.network.iTunesApi
+import com.example.playlistmaker.search.data.sharedPreferences.TrackManager
+import com.example.playlistmaker.settings.domain.sharedPrefs.SwitchThemeRepository
 import com.example.playlistmaker.sharing.data.navigator.ExternalNavigatorImpl
+import com.example.playlistmaker.sharing.data.resources.ResourceProvider
 import com.example.playlistmaker.sharing.data.resources.ResourceProviderImpl
 import com.example.playlistmaker.sharing.domain.impl.SharingInteractorImpl
+import com.example.playlistmaker.sharing.domain.share.ExternalNavigator
 import com.example.playlistmaker.sharing.domain.share.SharingInteractor
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-object Creator {
+object Creator: KoinComponent {
 
-    lateinit var application: Application
+//    lateinit var application: Application
+//    private val retrofiClient: NetworkClient by inject()
+//    private val trackManager: TrackManager by inject()
+    private val trackInteractor: TrackInteractor by inject()
+    private val trackHistoryInteractor: HistoryInteractor by inject()
+//    private val playerRep: PlayerRepository by inject()
+    private val playerInteractor: PlayerInteractor by inject()
+    private val extNav: ExternalNavigator by inject()
+    private val resPr: ResourceProvider by inject()
+    private val sharingInteractor:SharingInteractor by inject()
+    private val switchrep: SwitchThemeRepository by inject()
+    private val swtchInt: SwitchThemeInteractor by inject()
 
-    private fun getTrackRepository(): TrackRepository {
-        return TrackRepositoryImpl(RetrofitNetworkClient())
-    }
+//    private fun getTrackRepository(): TrackRepository {
+//        return TrackRepositoryImpl(retrofiClient)
+//    }
 
     fun provideTrackInteractor(): TrackInteractor {
-        return TrackInteractorImpl(getTrackRepository())
+        return trackInteractor
     }
 
     fun provideHistoryInteractor(): HistoryInteractor {
-        return HistoryInteractorImpl(TrackHistoryRepositoryImpl(TrackManagerImpl(application)))
+        return trackHistoryInteractor
     }
 
     fun provideSharingInteractor(): SharingInteractor{
-        return SharingInteractorImpl(ExternalNavigatorImpl(application), ResourceProviderImpl(
-            application))
+        return sharingInteractor
     }
 
     fun provideSwitcherInteractor(): SwitchThemeInteractor{
-        return SwitchThemeInteractorImpl(SwitchThemeRepositoryImpl(application))
+        return swtchInt
     }
 
     fun providePlayerInteractor(): PlayerInteractor{
-        return PlayerInteractorImpl(PlayerRepositoryImpl())
+        return playerInteractor
     }
 
-    fun initApplication(appl : Application){
-        application = appl
-    }
+//    fun initApplication(appl : Application){
+//        application = appl
+//    }
 
 }

@@ -4,11 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.settings.domain.sharedPrefs.SwitchThemeInteractor
+import com.example.playlistmaker.sharing.domain.share.SharingInteractor
 
-class SettingsViewModel(): ViewModel() {
+class SettingsViewModel(private val sharingInteractor: SharingInteractor, private val switcherInteractor: SwitchThemeInteractor): ViewModel() {
 
-    val sharingInteractor = Creator.provideSharingInteractor()
-    val switcherInteractor = Creator.provideSwitcherInteractor()
+//    val sharingInteractor = Creator.provideSharingInteractor()
+//    val switcherInteractor = Creator.provideSwitcherInteractor()
 
     private val _isThemeChecked = MutableLiveData<Boolean>()
 
