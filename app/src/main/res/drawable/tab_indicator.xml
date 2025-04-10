@@ -1,0 +1,11 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:left="@dimen/marginStart"
+        android:right="@dimen/marginStart"
+        android:gravity="center">
+        <shape android:shape="rectangle">
+            <size android:height="2dp" />
+            <solid android:color="?attr/colorOnPrimary" />
+        </shape>
+    </item>
+</layer-list>
