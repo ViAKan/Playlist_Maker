@@ -33,10 +33,18 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
+
 }
 
 dependencies {
 
+    implementation ("com.google.android.material:material:1.12.0")
+    implementation ("androidx.viewpager2:viewpager2:1.1.0")
+    implementation ("androidx.fragment:fragment-ktx:1.8.6")
     implementation("io.insert-koin:koin-android:3.3.0")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
