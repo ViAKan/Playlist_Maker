@@ -15,18 +15,6 @@
         android:paddingStart="4dp"
         android:paddingEnd="52dp">
 
-
-        <ImageButton
-            android:id="@+id/buttonBack"
-            android:layout_width="48dp"
-            android:layout_height="match_parent"
-            android:background="@color/transparent"
-            android:contentDescription="@string/description"
-            android:src="@drawable/vector"
-            app:iconGravity="start"
-            app:tint="?attr/colorOnPrimary"/>
-
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
