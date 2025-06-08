@@ -6,6 +6,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
@@ -92,6 +93,11 @@ class PlayerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         playerViewModel.pausePlayer()
+    }
+
+    companion object {
+        fun createArgs(strTrack: String): Bundle =
+            bundleOf(NAME_TRACK to strTrack)
     }
 
 }
