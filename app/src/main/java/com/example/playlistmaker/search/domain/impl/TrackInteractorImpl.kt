@@ -4,20 +4,21 @@ import com.example.playlistmaker.search.domain.api.TrackInteractor
 import com.example.playlistmaker.search.domain.api.TrackRepository
 import com.example.playlistmaker.search.domain.models.ConsumerData
 import com.example.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import java.util.concurrent.Executors
 
 class TrackInteractorImpl (private val repository: TrackRepository) : TrackInteractor {
 
-    private val executor = Executors.newCachedThreadPool()
-
-    override fun search(text: String, consumer: TrackInteractor.TrackConsumer<List<Track>?>) {
-        executor.execute{
-            val trackList = repository.search(text)
+    override fun search(text: String): Flow<ConsumerData<List<Track>?>> = flow {
+            val trackList = repository.search(text).first()
             if(trackList == null){
-                consumer.consume(ConsumerData.Error(""))
+                emit(ConsumerData.Error(""))
             } else{
-                consumer.consume(ConsumerData.Data(repository.search(text)))
+                emit(ConsumerData.Data(trackList))
             }
-        }
     }
 }

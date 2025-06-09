@@ -24,6 +24,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,6 +35,8 @@ import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.google.gson.Gson
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 const val HISTORY_PREFS = "history_prefs"
@@ -109,9 +112,14 @@ class SearchFragment: Fragment(), TrackAdapter.Listener {
         searchViewModel.getScreenState().observe(viewLifecycleOwner){ state ->
             adapter.updateTracks(state.trackList)
             if(state.error){
-                progressBar.visibility = View.GONE
-                showMessage(getString(R.string.something_went_wrong), getString(R.string.additional_message))
-                updateBtn.visibility = View.VISIBLE
+                if(inputEditText.hasFocus() && inputEditText.text.isNotEmpty()){
+                    progressBar.visibility = View.GONE
+                    showMessage(getString(R.string.something_went_wrong), getString(R.string.additional_message))
+                    updateBtn.visibility = View.VISIBLE
+                }
+                else{
+                    hide()
+                }
             }
             else{
                 if(state.trackList.isNotEmpty()){
@@ -124,6 +132,10 @@ class SearchFragment: Fragment(), TrackAdapter.Listener {
                 }
                 else{
                     showMessage("", "")
+                    placeholderMessage.visibility = View.GONE
+                    additionalMes.visibility = View.GONE
+                    placeholderImg.visibility = View.GONE
+                    updateBtn.visibility = View.GONE
                 }
             }
         }
@@ -169,9 +181,11 @@ class SearchFragment: Fragment(), TrackAdapter.Listener {
             false
         }
         updateBtn.setOnClickListener{
-            progressBar.visibility = View.VISIBLE
-            hide()
-            searchViewModel.searchDebounce(inputEditText.text.toString())
+            if (inputEditText.text.isNotEmpty()) {
+                progressBar.visibility = View.VISIBLE
+                hide()
+                searchViewModel.search(inputEditText.text.toString())
+            }
         }
         inputEditText.setOnFocusChangeListener { view, hasFocus ->
             historyView.visibility = if (hasFocus && inputEditText.text.isEmpty() && historyList.isNotEmpty()) View.VISIBLE else View.GONE
@@ -219,13 +233,9 @@ class SearchFragment: Fragment(), TrackAdapter.Listener {
 
 
     override fun onClick(track: Track) {
-
-//        val displayIntent = Intent(requireContext(), PlayerActivity::class.java)
         val strTrack = Gson().toJson(track)
 
         if(clickDebounce()) {
-//            displayIntent.putExtra(NAME_TRACK, strTrack)
-//            startActivity(displayIntent)
             findNavController().navigate(R.id.action_searchFragment_to_playerActivity,
                 PlayerActivity.createArgs(strTrack))
             searchViewModel.addTrackToHistory(track)
@@ -237,7 +247,10 @@ class SearchFragment: Fragment(), TrackAdapter.Listener {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
         }
         return current
     }

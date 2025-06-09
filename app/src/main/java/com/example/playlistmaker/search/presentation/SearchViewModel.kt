@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.search.domain.api.TrackInteractor
@@ -16,31 +17,37 @@ import com.example.playlistmaker.search.domain.models.ConsumerData
 import com.example.playlistmaker.search.domain.models.SearchScreenState
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.SEARCH_DEBOUNCE_DELAY
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 
 class SearchViewModel(private val trackInteractor: TrackInteractor, private val historyInteractor: HistoryInteractor) : ViewModel() {
 
-    private var searchRunnable: Runnable? = null
+//    private var searchRunnable: Runnable? = null
     private val handler = Handler(Looper.getMainLooper())
 
     private val _screenState = MutableLiveData<SearchScreenState>()
 
     fun getScreenState(): LiveData<SearchScreenState> = _screenState
 
-//    private val trackInteractor = Creator.provideTrackInteractor()
-//    private val historyInteractor: HistoryInteractor = Creator.provideHistoryInteractor()
+    private var latestSearchText: String? = null
+
+    private var searchJob: Job? = null
 
     fun search(query: String) {
-        trackInteractor.search(query, object : TrackInteractor.TrackConsumer<List<Track>?> {
-            override fun consume(data: ConsumerData<List<Track>?>) {
-                handler.post{
+        viewModelScope.launch {
+            trackInteractor.search(query)
+                .flowOn(Dispatchers.IO)
+                .collect { data ->
                     when (data) {
                         is ConsumerData.Data -> {
                             val results = data.data ?: emptyList()
-                            if(results.isNotEmpty()){
-                                _screenState.value = SearchScreenState(trackList = results, error = false, empty = false)
-                            }
-                            else{
-                                _screenState.value = SearchScreenState(empty = true)
+                            _screenState.value = if (results.isNotEmpty()) {
+                                SearchScreenState(trackList = results, error = false, empty = false)
+                            } else {
+                                SearchScreenState(empty = true)
                             }
                         }
                         is ConsumerData.Error -> {
@@ -48,27 +55,22 @@ class SearchViewModel(private val trackInteractor: TrackInteractor, private val 
                         }
                     }
                 }
-            }
-        })
+        }
     }
 
     fun searchDebounce(query: String) {
-        searchRunnable?.let { handler.removeCallbacks(it) }
-        searchRunnable = Runnable { search(query) }
-        handler.postDelayed(searchRunnable!!, SEARCH_DEBOUNCE_DELAY)
-    }
+        if (latestSearchText == query) {
+            return
+        }
 
-//    fun addTrackToHistory(track: Track) {
-//        historyInteractor.addInHistory(track)
-//    }
-//
-//    fun getHistory(): ArrayList<Track> {
-//        return historyInteractor.getHistoryFromSph()
-//    }
-//
-//    fun clearHistory() {
-//        historyInteractor.clearHistory()
-//    }
+        latestSearchText = query
+
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            search(query)
+        }
+    }
 
     private val _historyLiveData = MutableLiveData<List<Track>>()
     val historyLiveData: LiveData<List<Track>> get() = _historyLiveData
@@ -95,15 +97,4 @@ class SearchViewModel(private val trackInteractor: TrackInteractor, private val 
         Log.d("SearchViewModel", "Track added to history: ${track.trackName}")
     }
 
-//    companion object {
-//        fun getViewModelFactory(historyInteractor: HistoryInteractor): ViewModelProvider.Factory =
-//            object : ViewModelProvider.Factory {
-//                @Suppress("UNCHECKED_CAST")
-//                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//                    return SearchViewModel(
-//                        historyInteractor
-//                    ) as T
-//                }
-//            }
-//    }
 }
