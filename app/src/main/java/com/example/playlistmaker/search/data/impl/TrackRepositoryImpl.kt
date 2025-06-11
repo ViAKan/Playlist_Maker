@@ -5,17 +5,19 @@ import com.example.playlistmaker.search.data.dto.TrackRequest
 import com.example.playlistmaker.search.data.dto.TrackResponse
 import com.example.playlistmaker.search.domain.api.TrackRepository
 import com.example.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepository {
 
-    override fun search(text: String): List<Track>? {
+    override fun search(text: String): Flow<List<Track>?> = flow{
         val response = networkClient.doRequest(TrackRequest(text))
         val code = response.resultCode
-        return when (code){
+        when (code){
             200 -> {
                 val res = (response as TrackResponse).results
                 if (res.isNotEmpty()){
-                    res.map{
+                    val data = res.map{
                         Track(
                         it.releaseDate,
                         it.primaryGenreName,
@@ -28,13 +30,14 @@ class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepos
                         it.artworkUrl100,
                         it.previewUrl
                     )}
+                    emit(data)
                 }
                 else{
-                    emptyList()
+                    emit(emptyList())
                 }
             }
-            404 ->  emptyList()
-            else -> null
+            404 ->  emit(emptyList())
+            else -> emit(null)
         }
     }
 }
