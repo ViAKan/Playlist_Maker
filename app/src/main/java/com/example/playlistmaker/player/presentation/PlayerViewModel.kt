@@ -75,6 +75,24 @@ class PlayerViewModel(private val player: PlayerInteractor, private val likeInte
         }
     }
 
+    fun checkInitialLikeState(trackId: Int) {
+        viewModelScope.launch {
+            isFavorite.value = likeInteractor.isTrackLiked(trackId)
+        }
+    }
+
+    fun toggleLike(track: Track) {
+        viewModelScope.launch {
+            val currentlyLiked = isFavorite.value ?: likeInteractor.isTrackLiked(track.trackId)
+            if (currentlyLiked) {
+                removeFromLikes(track)
+            } else {
+                addToLikes(track)
+            }
+            isFavorite.value = !currentlyLiked
+        }
+    }
+
 //    fun addToLikesOrRemove(track: Track){
 //        viewModelScope.launch {
 //            val newState = !track.isFavorite // Инвертируем текущее состояние трека

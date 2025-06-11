@@ -87,27 +87,38 @@ class PlayerActivity : AppCompatActivity() {
             playerViewModel.playbackControl()
         }
 
-        likeButton.setOnClickListener {
-            lifecycleScope.launch {
-                val isLiked = playerViewModel.isTrackLiked(track.trackId)
-                if (isLiked) {
-                    playerViewModel.removeFromLikes(track)
-                } else {
-                    playerViewModel.addToLikes(track)
-                }
-                // Обновляем кнопку после изменения
-                val newState = playerViewModel.isTrackLiked(track.trackId)
-                likeButton.setImageResource(
-                    if (newState) R.drawable.heart else R.drawable.add_to_likes
-                )
-            }
-        }
+//        likeButton.setOnClickListener {
+//            lifecycleScope.launch {
+//                val isLiked = playerViewModel.isTrackLiked(track.trackId)
+//                if (isLiked) {
+//                    playerViewModel.removeFromLikes(track)
+//                } else {
+//                    playerViewModel.addToLikes(track)
+//                }
+//                // Обновляем кнопку после изменения
+//                val newState = playerViewModel.isTrackLiked(track.trackId)
+//                likeButton.setImageResource(
+//                    if (newState) R.drawable.heart else R.drawable.add_to_likes
+//                )
+//            }
+//        }
+//
+//        lifecycleScope.launch {
+//            val isLiked = playerViewModel.isTrackLiked(track.trackId)
+//            likeButton.setImageResource(
+//                if (isLiked) R.drawable.heart else R.drawable.add_to_likes
+//            )
+//        }
 
-        lifecycleScope.launch {
-            val isLiked = playerViewModel.isTrackLiked(track.trackId)
+        playerViewModel.checkInitialLikeState(track.trackId)
+
+        playerViewModel.getLike().observe(this) { isLiked ->
             likeButton.setImageResource(
                 if (isLiked) R.drawable.heart else R.drawable.add_to_likes
             )
+        }
+        likeButton.setOnClickListener {
+            playerViewModel.toggleLike(track)
         }
 
         playerViewModel.getState().observe(this){ state ->

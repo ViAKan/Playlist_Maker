@@ -33,7 +33,6 @@ class LikeRepositoryImpl(private val appDataBase: AppDataBase, private val track
         return appDataBase.trackDao().isTrackLiked(trackId) > 0
     }
 
-
     private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> {
         return tracks.map { track -> trackConvertor.map(track) }
     }
