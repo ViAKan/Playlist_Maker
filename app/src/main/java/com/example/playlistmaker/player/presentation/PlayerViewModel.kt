@@ -2,28 +2,32 @@ package com.example.playlistmaker.player.presentation
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.media.domain.db.LikesInteractor
 import com.example.playlistmaker.player.domain.mediaplayer.PlayerInteractor
 import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.search.domain.models.SearchScreenState
+import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class PlayerViewModel(private val player: PlayerInteractor): ViewModel() {
+class PlayerViewModel(private val player: PlayerInteractor, private val likeInteractor: LikesInteractor): ViewModel() {
 
     private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
-    private val handler: Handler? = Handler(Looper.getMainLooper())
 
     private val playerState = MutableLiveData<PlayerState>()
+    private val isFavorite = MutableLiveData<Boolean>()
 
     fun getState(): LiveData<PlayerState> = playerState
+    fun getLike(): LiveData<Boolean> = isFavorite
 
     private var timerJob: Job? = null
 
@@ -45,7 +49,6 @@ class PlayerViewModel(private val player: PlayerInteractor): ViewModel() {
     private fun startPlayer() {
         player.startPlayer()
         playerState.value = playerState.value?.copy(state = STATE_PLAYING)
-//        handler?.post(updateTimer())
         startTimer()
     }
 
@@ -53,7 +56,6 @@ class PlayerViewModel(private val player: PlayerInteractor): ViewModel() {
         player.pausePlayer()
         timerJob?.cancel()
         playerState.value = playerState.value?.copy(state = STATE_PAUSED)
-//        handler?.removeCallbacks(updateTimer())
     }
 
     private fun onPrepare() {
@@ -61,18 +63,8 @@ class PlayerViewModel(private val player: PlayerInteractor): ViewModel() {
     }
 
     private fun onComplete() {
-//        handler?.removeCallbacksAndMessages(null)
         playerState.value = playerState.value?.copy(currentTime = "00:00", state = STATE_PREPARED)
     }
-
-//    private fun updateTimer(): Runnable {
-//        return object : Runnable {
-//            override fun run() {
-//                playerState.value = playerState.value?.copy(currentTime = dateFormat.format(player.getCurrentPosition()))
-//                handler?.postDelayed(this, PLAY_DELAY)
-//            }
-//        }
-//    }
 
     private fun startTimer() {
         timerJob = viewModelScope.launch {
@@ -83,11 +75,26 @@ class PlayerViewModel(private val player: PlayerInteractor): ViewModel() {
         }
     }
 
+    fun addToLikesOrRemove(track: Track){
+        viewModelScope.launch {
+            isFavorite.postValue(likeInteractor.check(track))
+            Log.d("PlayerVM", "Current trackId: ${track.trackId}")
+            val newFavoriteState = likeInteractor.check(track)
+            if (newFavoriteState == false) {
+                likeInteractor.addToLikes(track.copy(isFavorite = true))
+                Log.d("PlayerVM", "Is favorite: ${likeInteractor.check(track)}")
+            } else {
+                likeInteractor.deleteFromLikes(track)
+                track.isFavorite = false
+                Log.d("PlayerVMDel", "Is favorite: ${likeInteractor.check(track)}")
+            }
+            isFavorite.postValue(newFavoriteState)
+        }
+    }
 
     override fun onCleared() {
         super.onCleared()
         player.releasePlayer()
-//        handler?.removeCallbacksAndMessages(null)
     }
 
     companion object {

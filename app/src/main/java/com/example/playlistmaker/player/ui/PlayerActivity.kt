@@ -1,6 +1,7 @@
 package com.example.playlistmaker.player.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -10,15 +11,18 @@ import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
+import com.example.playlistmaker.media.presentation.LikesViewModel
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.example.playlistmaker.search.ui.NAME_TRACK
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -27,6 +31,7 @@ class PlayerActivity : AppCompatActivity() {
 
     private lateinit var play: ImageButton
     private lateinit var currentTime: TextView
+    private lateinit var likeButton: ImageButton
 
     private val playerViewModel by viewModel<PlayerViewModel>()
 
@@ -58,6 +63,7 @@ class PlayerActivity : AppCompatActivity() {
         var imgSource: String = ""
         val type = object : TypeToken<Track>() {}.type
         val track = Gson().fromJson<Track>(intent.getStringExtra(NAME_TRACK), type)
+        likeButton = findViewById<ImageButton>(R.id.addToLikes)
         title.text = track.trackName
         author.text = track.artistName
         durationSong.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
@@ -78,6 +84,17 @@ class PlayerActivity : AppCompatActivity() {
         playerViewModel.preparePlayer(url)
         play.setOnClickListener {
             playerViewModel.playbackControl()
+        }
+
+        likeButton.setOnClickListener{
+            playerViewModel.addToLikesOrRemove(track)
+        }
+
+        playerViewModel.getLike().observe(this) { isFavorite ->
+            likeButton.setImageResource(
+                if (isFavorite) R.drawable.heart
+                else R.drawable.add_to_likes
+            )
         }
 
         playerViewModel.getState().observe(this){ state ->

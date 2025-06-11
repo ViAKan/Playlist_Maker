@@ -2,7 +2,10 @@ package com.example.playlistmaker.app
 
 import android.app.Application
 import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.media.di.dataModuleMedia
+import com.example.playlistmaker.media.di.interactorModuleMedia
 import com.example.playlistmaker.media.di.mediaViewModelModule
+import com.example.playlistmaker.media.di.repositoryModuleMedia
 import com.example.playlistmaker.player.di.playerInteractorModule
 import com.example.playlistmaker.player.di.playerRepositoryModule
 import com.example.playlistmaker.player.di.playerViewModelModule
@@ -30,7 +33,7 @@ class App : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@App)
-            modules(dataModule, repositoryModule, interactorModule, viewModelModule, playerRepositoryModule, playerInteractorModule, playerViewModelModule, externalNavigatorModule, resourceProviderModule, sharingInteractorModule, settingsRepositoryModule, settingsInteractorModule, settingsViewModelModule, mediaViewModelModule)
+            modules(dataModule, repositoryModule, interactorModule, viewModelModule, playerRepositoryModule, playerInteractorModule, playerViewModelModule, externalNavigatorModule, resourceProviderModule, sharingInteractorModule, settingsRepositoryModule, settingsInteractorModule, settingsViewModelModule, mediaViewModelModule, dataModuleMedia, repositoryModuleMedia, interactorModuleMedia)
         }
 //        Creator.initApplication(this)
         val switcherInt: SwitchThemeInteractor by inject()
