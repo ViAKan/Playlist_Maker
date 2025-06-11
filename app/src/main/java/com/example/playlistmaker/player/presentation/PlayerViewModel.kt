@@ -75,28 +75,40 @@ class PlayerViewModel(private val player: PlayerInteractor, private val likeInte
         }
     }
 
-    fun addToLikesOrRemove(track: Track){
-        viewModelScope.launch {
-            val newState = !track.isFavorite // Инвертируем текущее состояние трека
-            track.isFavorite = newState
-            Log.d("PlayerVM", "Current trackId: ${track.trackId}")
-            if (newState) {
-                likeInteractor.addToLikes(track)
-                track.isFavorite = true
-                isFavorite.postValue(true)
-                Log.d("PlayerVM", "Is favorite: ${likeInteractor}")
-            } else {
-                likeInteractor.deleteFromLikes(track)
-                track.isFavorite = false
-                isFavorite.postValue(false)
-                Log.d("PlayerVMDel", "Is favorite: ${likeInteractor}")
-            }
-        }
+//    fun addToLikesOrRemove(track: Track){
+//        viewModelScope.launch {
+//            val newState = !track.isFavorite // Инвертируем текущее состояние трека
+//            track.isFavorite = newState
+//            Log.d("PlayerVM", "Current trackId: ${track.trackId}")
+//            if (newState) {
+//                likeInteractor.addToLikes(track)
+//                track.isFavorite = true
+//                isFavorite.postValue(true)
+//                Log.d("PlayerVM", "Is favorite: ${likeInteractor}")
+//            } else {
+//                likeInteractor.deleteFromLikes(track)
+//                track.isFavorite = false
+//                isFavorite.postValue(false)
+//                Log.d("PlayerVMDel", "Is favorite: ${likeInteractor}")
+//            }
+//        }
+//    }
+
+    suspend fun addToLikes(track: Track){
+        likeInteractor.addToLikes(track)
+    }
+
+    suspend fun removeFromLikes(track:Track){
+        likeInteractor.deleteFromLikes(track)
     }
 
     override fun onCleared() {
         super.onCleared()
         player.releasePlayer()
+    }
+
+    suspend fun isTrackLiked(trackId: Int): Boolean {
+        return likeInteractor.isTrackLiked(trackId)
     }
 
     companion object {

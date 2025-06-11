@@ -20,8 +20,8 @@ class LikesInteractirImpl(private val likesRep: LikesRepository): LikesInteracto
         likesRep.deleteFromLikes(TrackDto(track.releaseDate, track.primaryGenreName, track.country, track.collectionName, track.trackId, track.trackName, track.artistName, track.trackTimeMillis, track.artworkUrl100, track.artworkUrl100))
     }
 
-    override suspend fun update(trackList: List<Track>) {
-        likesRep.updateLikes(trackList.map { track -> track.toTrackDto() })
+    override suspend fun isTrackLiked(trackId: Int): Boolean {
+        return likesRep.isTrackLiked(trackId)
     }
 
 }

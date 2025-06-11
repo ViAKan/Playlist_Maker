@@ -11,6 +11,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -86,19 +87,27 @@ class PlayerActivity : AppCompatActivity() {
             playerViewModel.playbackControl()
         }
 
-        likeButton.setOnClickListener{
-            playerViewModel.addToLikesOrRemove(track)
-            likeButton.setImageResource(
-                if (track.isFavorite) R.drawable.heart else R.drawable.add_to_likes
-            )
-        }
-
-        playerViewModel.getLike().observe(this) { isFavorite ->
-            isFavorite?.let {
+        likeButton.setOnClickListener {
+            lifecycleScope.launch {
+                val isLiked = playerViewModel.isTrackLiked(track.trackId)
+                if (isLiked) {
+                    playerViewModel.removeFromLikes(track)
+                } else {
+                    playerViewModel.addToLikes(track)
+                }
+                // Обновляем кнопку после изменения
+                val newState = playerViewModel.isTrackLiked(track.trackId)
                 likeButton.setImageResource(
-                    if (it) R.drawable.heart else R.drawable.add_to_likes
+                    if (newState) R.drawable.heart else R.drawable.add_to_likes
                 )
             }
+        }
+
+        lifecycleScope.launch {
+            val isLiked = playerViewModel.isTrackLiked(track.trackId)
+            likeButton.setImageResource(
+                if (isLiked) R.drawable.heart else R.drawable.add_to_likes
+            )
         }
 
         playerViewModel.getState().observe(this){ state ->

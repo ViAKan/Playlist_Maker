@@ -20,9 +20,9 @@ interface TrackDao {
     @Query("SELECT trackId FROM track_table")
     suspend fun getLikedTracksId(): List<Int>
 
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun updateLikes(trackList: List<TrackEntity>)
-
     @Delete(entity = TrackEntity::class)
     suspend fun deleteFromLikes(track: TrackEntity)
+
+    @Query("SELECT COUNT(*) FROM track_table WHERE trackId = :trackId")
+    suspend fun isTrackLiked(trackId: Int): Int
 }

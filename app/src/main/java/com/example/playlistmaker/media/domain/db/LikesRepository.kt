@@ -9,6 +9,6 @@ interface LikesRepository {
     fun listLikes(): Flow<List<Track>>
     suspend fun addToLikes(track: TrackDto)
     suspend fun deleteFromLikes(track: TrackDto)
-    suspend fun updateLikes(trackList: List<TrackDto>)
+    suspend fun isTrackLiked(trackId: Int): Boolean
 
 }
