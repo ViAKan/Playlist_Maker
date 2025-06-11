@@ -11,5 +11,6 @@ data class Track (
     val trackTimeMillis: Long,
     val artworkUrl100: String,
     val previewUrl: String,
-    var isFavorite: Boolean = false
+    var isFavorite: Boolean = false,
+    val timestamp: Long = System.currentTimeMillis()
 )

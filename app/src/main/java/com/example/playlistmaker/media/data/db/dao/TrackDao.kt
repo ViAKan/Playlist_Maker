@@ -14,7 +14,7 @@ interface TrackDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTracks(track: TrackEntity)
 
-    @Query("SELECT * FROM track_table")
+    @Query("SELECT * FROM track_table ORDER BY timestamp DESC")
     fun getLikedTracks(): Flow<List<TrackEntity>>
 
     @Query("SELECT trackId FROM track_table")

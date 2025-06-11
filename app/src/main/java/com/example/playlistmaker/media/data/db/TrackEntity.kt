@@ -16,5 +16,6 @@ data class TrackEntity (
     val artistName: String,
     val trackTimeMillis: Long,
     val artworkUrl100: String,
-    val previewUrl: String
+    val previewUrl: String,
+    val timestamp: Long = System.currentTimeMillis()
 )
