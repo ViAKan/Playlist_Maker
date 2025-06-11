@@ -25,9 +25,7 @@ class PlaylistFragment : Fragment() {
         }
     }
 
-    private val playlistsViewModel: LikesViewModel by viewModel {
-        parametersOf(requireArguments().getString(PLAYLISTS))
-    }
+    private val playListViewModel by viewModel<LikesViewModel>()
 
     private lateinit var binding: PlaylistFragmentBinding
 
@@ -39,9 +37,8 @@ class PlaylistFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        playlistsViewModel.observe().observe(viewLifecycleOwner) {
-            showMedia(it)
-        }
+        showMedia(requireArguments().getString(PLAYLISTS).toString())
+
     }
 
     fun showMedia(text: String){

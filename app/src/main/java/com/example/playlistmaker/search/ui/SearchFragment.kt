@@ -239,7 +239,7 @@ class SearchFragment: Fragment(), TrackAdapter.Listener {
             findNavController().navigate(R.id.action_searchFragment_to_playerActivity,
                 PlayerActivity.createArgs(strTrack))
             searchViewModel.addTrackToHistory(track)
-            Log.d("cleadd", historyList.toString())
+            Log.d("PlayerVM1", "Is favorite: ${track.isFavorite}")
         }
     }
 
