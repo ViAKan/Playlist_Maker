@@ -5,7 +5,7 @@ import com.example.playlistmaker.search.data.dto.TrackDto
 import com.example.playlistmaker.search.domain.models.Track
 
 class TrackDbConvertor {
-    fun map(track: Track): TrackEntity {
+    fun map(track: TrackDto): TrackEntity {
         return TrackEntity(track.releaseDate, track.primaryGenreName, track.country, track.collectionName, track.trackId, track.trackName, track.artistName, track.trackTimeMillis, track.artworkUrl100, track.previewUrl)
     }
 

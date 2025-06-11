@@ -27,6 +27,7 @@ class LikesViewModel(private val context: Context, private val likeInteractor: L
             likeInteractor
                 .listLikes()
                 .collect { tracks ->
+                    likeInteractor.update(tracks)
                     stateLiveData.postValue(tracks.toMutableList())
                 }
         }

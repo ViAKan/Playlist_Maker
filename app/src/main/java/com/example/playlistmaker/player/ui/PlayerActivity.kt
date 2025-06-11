@@ -88,13 +88,17 @@ class PlayerActivity : AppCompatActivity() {
 
         likeButton.setOnClickListener{
             playerViewModel.addToLikesOrRemove(track)
+            likeButton.setImageResource(
+                if (track.isFavorite) R.drawable.heart else R.drawable.add_to_likes
+            )
         }
 
         playerViewModel.getLike().observe(this) { isFavorite ->
-            likeButton.setImageResource(
-                if (isFavorite) R.drawable.heart
-                else R.drawable.add_to_likes
-            )
+            isFavorite?.let {
+                likeButton.setImageResource(
+                    if (it) R.drawable.heart else R.drawable.add_to_likes
+                )
+            }
         }
 
         playerViewModel.getState().observe(this){ state ->

@@ -9,5 +9,5 @@ interface LikesInteractor {
     fun listLikes(): Flow<List<Track>>
     suspend fun addToLikes(track: Track)
     suspend fun deleteFromLikes(track: Track)
-    suspend fun check(track: Track): Boolean
+    suspend fun update(trackList: List<Track>)
 }

@@ -77,18 +77,20 @@ class PlayerViewModel(private val player: PlayerInteractor, private val likeInte
 
     fun addToLikesOrRemove(track: Track){
         viewModelScope.launch {
-            isFavorite.postValue(likeInteractor.check(track))
+            val newState = !track.isFavorite // Инвертируем текущее состояние трека
+            track.isFavorite = newState
             Log.d("PlayerVM", "Current trackId: ${track.trackId}")
-            val newFavoriteState = likeInteractor.check(track)
-            if (newFavoriteState == false) {
-                likeInteractor.addToLikes(track.copy(isFavorite = true))
-                Log.d("PlayerVM", "Is favorite: ${likeInteractor.check(track)}")
+            if (newState) {
+                likeInteractor.addToLikes(track)
+                track.isFavorite = true
+                isFavorite.postValue(true)
+                Log.d("PlayerVM", "Is favorite: ${likeInteractor}")
             } else {
                 likeInteractor.deleteFromLikes(track)
                 track.isFavorite = false
-                Log.d("PlayerVMDel", "Is favorite: ${likeInteractor.check(track)}")
+                isFavorite.postValue(false)
+                Log.d("PlayerVMDel", "Is favorite: ${likeInteractor}")
             }
-            isFavorite.postValue(newFavoriteState)
         }
     }
 

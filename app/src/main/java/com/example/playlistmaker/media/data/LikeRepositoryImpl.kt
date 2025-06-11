@@ -8,27 +8,29 @@ import com.example.playlistmaker.search.data.dto.TrackDto
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 class LikeRepositoryImpl(private val appDataBase: AppDataBase, private val trackConvertor: TrackDbConvertor): LikesRepository {
-    override fun listLikes(): Flow<List<Track>> = flow {
+
+    override fun listLikes(): Flow<List<Track>>{
         val tracks = appDataBase.trackDao().getLikedTracks()
-        emit(convertFromTrackEntity(tracks))
+        return tracks.map{ trackEntities ->
+            trackEntities.map {trackConvertor.map(it) }
+        }
     }
 
-    override suspend fun addToLikes(track: Track) {
+    override suspend fun addToLikes(track: TrackDto) {
         val trackEnt = trackConvertor.map(track)
         appDataBase.trackDao().insertTracks(trackEnt)
     }
 
-    override suspend fun deleteFromLikes(track: Track) {
+    override suspend fun deleteFromLikes(track: TrackDto) {
         val trackEnt = trackConvertor.map(track)
         appDataBase.trackDao().deleteFromLikes(trackEnt)
     }
 
-    override suspend fun checkId(track: Track): Boolean {
-        val trackListIds = appDataBase.trackDao().getLikedTracksId()
-        if(trackListIds.contains(track.trackId)) return true
-        return false
+    override suspend fun updateLikes(trackList: List<TrackDto>) {
+        appDataBase.trackDao().updateLikes(trackList.map { track -> trackConvertor.map(track) })
     }
 
     private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> {

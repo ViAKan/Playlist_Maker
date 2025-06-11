@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.Flow
 interface LikesRepository {
 
     fun listLikes(): Flow<List<Track>>
-    suspend fun addToLikes(track: Track)
-    suspend fun deleteFromLikes(track: Track)
-    suspend fun checkId(track:Track): Boolean
+    suspend fun addToLikes(track: TrackDto)
+    suspend fun deleteFromLikes(track: TrackDto)
+    suspend fun updateLikes(trackList: List<TrackDto>)
 
 }
