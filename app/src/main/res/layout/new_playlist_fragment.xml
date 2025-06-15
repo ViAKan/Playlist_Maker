@@ -62,17 +62,29 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintGuide_end="16dp" />
-            <ImageView
-                android:id="@+id/add_cover"
-                android:clickable="true"
+            <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginHorizontal="8dp"
-                app:layout_constraintDimensionRatio="h,1:1"
+                android:clickable="true"
+                android:id="@+id/add_cover1"
                 app:layout_constraintEnd_toStartOf="@+id/rightBorder"
                 app:layout_constraintStart_toEndOf="@+id/leftBorder"
                 app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/add_cover" />
+                app:layout_constraintDimensionRatio="h,1:1"
+                android:scaleType="centerCrop"
+                android:src="@drawable/add_cover"
+                android:layout_marginHorizontal="8dp"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp">
+            <ImageView
+                android:id="@+id/add_cover"
+                android:clickable="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/add_cover"/>
+            </androidx.cardview.widget.CardView>
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/input_title1"
                 android:layout_width="0dp"
@@ -91,7 +103,7 @@
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toStartOf="@+id/rightBorder"
                 app:layout_constraintStart_toStartOf="@id/leftBorder"
-                app:layout_constraintTop_toBottomOf="@id/add_cover"
+                app:layout_constraintTop_toBottomOf="@id/add_cover1"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -102,7 +114,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_description"
+                android:id="@+id/input_description1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:boxStrokeColor="@color/color_input"
@@ -121,6 +133,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/input_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     />
@@ -133,7 +146,7 @@
                         app:layout_constraintStart_toStartOf="@id/leftBorder"
                         app:layout_constraintEnd_toStartOf="@id/rightBorder"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/input_description"
+                        app:layout_constraintTop_toBottomOf="@id/input_description1"
                         android:enabled="false"
                         android:text="@string/save"
                         android:textColor="@color/white"

@@ -2,8 +2,10 @@ package com.example.playlistmaker.player.ui
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -17,10 +19,12 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.media.presentation.LikesViewModel
+import com.example.playlistmaker.media.ui.AddToPlaylistBottomSheet
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.example.playlistmaker.search.ui.NAME_TRACK
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
@@ -44,6 +48,24 @@ class PlayerActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+//        val bottomSheetContainer = findViewById<LinearLayout>(R.id.standard_bottom_sheet)
+//
+//        //  BottomSheetBehavior.from() — вспомогательная функция, позволяющая получить объект BottomSheetBehavior, связанный с контейнером BottomSheet
+//        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+//            state = BottomSheetBehavior.STATE_HIDDEN
+//        }
+
+//        val bottomSheetContainer = findViewById<LinearLayout>(R.id.standard_bottom_sheet)
+//
+//        //  BottomSheetBehavior.from() — вспомогательная функция, позволяющая получить объект BottomSheetBehavior, связанный с контейнером BottomSheet
+//        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+//            state = BottomSheetBehavior.STATE_HIDDEN
+//        }
+//
+        findViewById<ImageButton>(R.id.addToPlaylist).setOnClickListener {
+            showPlaylistsBottomSheet()
         }
 
         val backButton = findViewById<ImageButton>(R.id.buttonBack)
@@ -110,6 +132,11 @@ class PlayerActivity : AppCompatActivity() {
                 PlayerViewModel.STATE_PAUSED, PlayerViewModel.STATE_PREPARED -> play.setImageResource(R.drawable.button_play)
             }
         }
+    }
+
+    private fun showPlaylistsBottomSheet() {
+        val bottomSheet = AddToPlaylistBottomSheet()
+        bottomSheet.show(supportFragmentManager, AddToPlaylistBottomSheet.TAG)
     }
 
     override fun onPause() {
