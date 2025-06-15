@@ -42,5 +42,8 @@
         android:id="@+id/addToPlaylistBottomSheet"
         android:name="com.example.playlistmaker.media.ui.AddToPlaylistBottomSheet"
         android:label="AddToPlaylistBottomSheet" >
+        <action
+            android:id="@+id/action_addToPlaylistBottomSheet_to_newPlaylistFragment"
+            app:destination="@id/newPlaylistFragment" />
     </dialog>
 </navigation>
