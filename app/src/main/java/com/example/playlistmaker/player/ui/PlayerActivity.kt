@@ -83,32 +83,12 @@ class PlayerActivity : AppCompatActivity() {
         play = findViewById(R.id.buttonPlay)
         val url = track.previewUrl
         playerViewModel.preparePlayer(url)
+        Log.d("PlayerPP", "Player state: ${playerViewModel.getState().value}")
+        Log.d("PlayerPP3", "${track.artworkUrl100}")
         play.setOnClickListener {
             playerViewModel.playbackControl()
+            Log.d("PlayerPP1", "Player state: ${playerViewModel.getState().value}")
         }
-
-//        likeButton.setOnClickListener {
-//            lifecycleScope.launch {
-//                val isLiked = playerViewModel.isTrackLiked(track.trackId)
-//                if (isLiked) {
-//                    playerViewModel.removeFromLikes(track)
-//                } else {
-//                    playerViewModel.addToLikes(track)
-//                }
-//                // Обновляем кнопку после изменения
-//                val newState = playerViewModel.isTrackLiked(track.trackId)
-//                likeButton.setImageResource(
-//                    if (newState) R.drawable.heart else R.drawable.add_to_likes
-//                )
-//            }
-//        }
-//
-//        lifecycleScope.launch {
-//            val isLiked = playerViewModel.isTrackLiked(track.trackId)
-//            likeButton.setImageResource(
-//                if (isLiked) R.drawable.heart else R.drawable.add_to_likes
-//            )
-//        }
 
         playerViewModel.checkInitialLikeState(track.trackId)
 
@@ -124,6 +104,7 @@ class PlayerActivity : AppCompatActivity() {
         playerViewModel.getState().observe(this){ state ->
             currentTime.text = state.currentTime
             play.isEnabled = state.isPlayEnabled
+//            Log.d("PlayerPVM", "Player state: ${playerViewModel.getState().value}")
             when (state.state) {
                 PlayerViewModel.STATE_PLAYING -> play.setImageResource(R.drawable.pause)
                 PlayerViewModel.STATE_PAUSED, PlayerViewModel.STATE_PREPARED -> play.setImageResource(R.drawable.button_play)

@@ -5,11 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.LikesFragmentBinding
 import com.example.playlistmaker.databinding.PlaylistFragmentBinding
 import com.example.playlistmaker.media.presentation.LikesViewModel
 import com.example.playlistmaker.media.presentation.PlaylistsViewModel
+import com.example.playlistmaker.player.ui.PlayerActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -38,6 +40,9 @@ class PlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         showMedia(requireArguments().getString(PLAYLISTS).toString())
+        binding.btnNewPlaylist.setOnClickListener {
+            findNavController().navigate(R.id.action_mediaFragment_to_newPlaylistFragment)
+        }
 
     }
 

@@ -13,11 +13,11 @@ class LikesInteractirImpl(private val likesRep: LikesRepository): LikesInteracto
     }
 
     override suspend fun addToLikes(track: Track) {
-        likesRep.addToLikes(TrackDto(track.releaseDate, track.primaryGenreName, track.country, track.collectionName, track.trackId, track.trackName, track.artistName, track.trackTimeMillis, track.artworkUrl100, track.artworkUrl100))
+        likesRep.addToLikes(TrackDto(track.releaseDate, track.primaryGenreName, track.country, track.collectionName, track.trackId, track.trackName, track.artistName, track.trackTimeMillis, track.artworkUrl100, track.previewUrl))
     }
 
     override suspend fun deleteFromLikes(track: Track) {
-        likesRep.deleteFromLikes(TrackDto(track.releaseDate, track.primaryGenreName, track.country, track.collectionName, track.trackId, track.trackName, track.artistName, track.trackTimeMillis, track.artworkUrl100, track.artworkUrl100))
+        likesRep.deleteFromLikes(TrackDto(track.releaseDate, track.primaryGenreName, track.country, track.collectionName, track.trackId, track.trackName, track.artistName, track.trackTimeMillis, track.artworkUrl100, track.previewUrl))
     }
 
     override suspend fun isTrackLiked(trackId: Int): Boolean {

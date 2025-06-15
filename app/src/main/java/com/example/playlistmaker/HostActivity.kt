@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import androidx.navigation.fragment.NavHostFragment
@@ -28,5 +29,15 @@ class HostActivity: AppCompatActivity() {
         bottomNavigationView.selectedItemId = R.id.mediaFragment
         bottomNavigationView.setupWithNavController(navController)
 
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.newPlaylistFragment -> {
+                    bottomNavigationView.visibility = View.GONE
+                }
+                else -> {
+                    bottomNavigationView.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 }
