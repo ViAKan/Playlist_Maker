@@ -108,6 +108,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/input_title"
+                    android:textCursorDrawable="@drawable/text_cursor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     />
@@ -134,6 +135,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/input_description"
+                    android:textCursorDrawable="@drawable/text_cursor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     />

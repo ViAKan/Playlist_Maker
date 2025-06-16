@@ -11,7 +11,7 @@ class PlaylistsListAdapter (
 ) : RecyclerView.Adapter<PlaylistsSheetViewHolder> () {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistsSheetViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.playlist_covers_view, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.playlists_view, parent, false)
         return PlaylistsSheetViewHolder(view)
     }
     override fun onBindViewHolder(holder:PlaylistsSheetViewHolder, position: Int) {

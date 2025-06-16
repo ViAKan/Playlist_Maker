@@ -1,9 +1,15 @@
 package com.example.playlistmaker.player.ui
 
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
+import android.view.View
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -17,19 +23,27 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.HostActivity
 import com.example.playlistmaker.R
+import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.media.presentation.LikesViewModel
-import com.example.playlistmaker.media.ui.AddToPlaylistBottomSheet
+import com.example.playlistmaker.media.presentation.PlaylistsViewModel
 import com.example.playlistmaker.media.ui.NewPlaylistFragment
+import com.example.playlistmaker.media.ui.PlaylistAdapter
+import com.example.playlistmaker.media.ui.PlaylistsListAdapter
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.example.playlistmaker.search.ui.NAME_TRACK
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
@@ -44,6 +58,12 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var likeButton: ImageButton
 
     private val playerViewModel by viewModel<PlayerViewModel>()
+    private val playListViewModel by viewModel<PlaylistsViewModel>()
+
+    private lateinit var adapter: PlaylistsListAdapter
+    private lateinit var playlists: ArrayList<Playlist>
+
+    private lateinit var bottomSheetDialog: BottomSheetDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,22 +75,72 @@ class PlayerActivity : AppCompatActivity() {
             insets
         }
 
-//        val bottomSheetContainer = findViewById<LinearLayout>(R.id.standard_bottom_sheet)
-//
-//        //  BottomSheetBehavior.from() — вспомогательная функция, позволяющая получить объект BottomSheetBehavior, связанный с контейнером BottomSheet
-//        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
-//            state = BottomSheetBehavior.STATE_HIDDEN
-//        }
+        playlists = ArrayList()
+        adapter = PlaylistsListAdapter(playlists)
 
-//        val bottomSheetContainer = findViewById<LinearLayout>(R.id.standard_bottom_sheet)
-//
-//        //  BottomSheetBehavior.from() — вспомогательная функция, позволяющая получить объект BottomSheetBehavior, связанный с контейнером BottomSheet
-//        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
-//            state = BottomSheetBehavior.STATE_HIDDEN
-//        }
-//
+        playListViewModel.loadAllPlaylists()
+
+        playListViewModel.observePlaylists().observe(this) { newPlaylists ->
+            playlists.clear()
+            playlists.addAll(newPlaylists)
+            adapter.notifyDataSetChanged()
+            Log.d("PlaylistsPlayer", playlists.toString())
+        }
+
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val screenHeight = displayMetrics.heightPixels
+        val halfScreenHeight = (screenHeight * 0.5).toInt()
+
+        bottomSheetDialog = BottomSheetDialog(this).apply {
+            setContentView(R.layout.bottom_sheet_layout)
+            behavior.isFitToContents = true
+            behavior.skipCollapsed = true
+            window?.setBackgroundDrawableResource(android.R.color.transparent)
+            window?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)?.setBackgroundResource(android.R.color.transparent)
+            val recyclerView = findViewById<RecyclerView>(R.id.playlistsRecyclerView)
+            recyclerView?.let {
+                it.layoutManager = LinearLayoutManager(this@PlayerActivity)
+                it.adapter = this@PlayerActivity.adapter
+                it.setHasFixedSize(true)
+            } ?: run {
+                Log.e("PlayerActivity", "RecyclerView not found in bottom sheet")
+            }
+
+            findViewById<Button>(R.id.btnNewPlaylist)?.setOnClickListener {
+                dismiss()
+                // openNewPlaylistFragment()
+            }
+        }
+
+        bottomSheetDialog.setOnShowListener {
+            val bottomSheet = bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as? FrameLayout
+            bottomSheet?.let { sheet ->
+                val shapeAppearanceModel = ShapeAppearanceModel.builder(
+                    sheet.context,
+                    0,
+                    R.style.BottomSheetCorners
+                ).build()
+
+                ViewCompat.setBackground(sheet, MaterialShapeDrawable(shapeAppearanceModel).apply {
+                    fillColor = ColorStateList.valueOf(Color.WHITE)
+                    elevation = 0f
+                })
+                val behavior = BottomSheetBehavior.from(sheet)
+                behavior.peekHeight = halfScreenHeight
+                behavior.skipCollapsed = true
+                behavior.isHideable = true
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+            bottomSheet?.viewTreeObserver?.addOnGlobalLayoutListener {
+                val maxHeight = (resources.displayMetrics.heightPixels * 0.6).toInt()
+                bottomSheet.layoutParams.height = maxHeight
+                bottomSheet.requestLayout()
+            }
+        }
+
         findViewById<ImageButton>(R.id.addToPlaylist).setOnClickListener {
-            showBottomSheet()
+            bottomSheetDialog.show()
         }
 
         val backButton = findViewById<ImageButton>(R.id.buttonBack)
@@ -131,39 +201,14 @@ class PlayerActivity : AppCompatActivity() {
         playerViewModel.getState().observe(this){ state ->
             currentTime.text = state.currentTime
             play.isEnabled = state.isPlayEnabled
-//            Log.d("PlayerPVM", "Player state: ${playerViewModel.getState().value}")
             when (state.state) {
                 PlayerViewModel.STATE_PLAYING -> play.setImageResource(R.drawable.pause)
                 PlayerViewModel.STATE_PAUSED, PlayerViewModel.STATE_PREPARED -> play.setImageResource(R.drawable.button_play)
             }
         }
+
     }
 
-//    private fun showPlaylistsBottomSheet() {
-//        val bottomSheet = AddToPlaylistBottomSheet()
-//        bottomSheet.show(supportFragmentManager, AddToPlaylistBottomSheet.TAG)
-//    }
-
-    private fun showBottomSheet() {
-        // 1. Создаем BottomSheetDialog
-        val bottomSheetDialog = BottomSheetDialog(this)
-
-        // 2. Надуваем layout из XML
-        val view = layoutInflater.inflate(R.layout.bottom_sheet_layout, null)
-
-        // 3. Находим кнопку и вешаем обработчик
-        view.findViewById<Button>(R.id.btnNewPlaylist).setOnClickListener {
-
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container_view, NewPlaylistFragment())
-                .addToBackStack(null)
-                .commit()
-        }
-
-        // 4. Настраиваем и показываем BottomSheet
-        bottomSheetDialog.setContentView(view)
-        bottomSheetDialog.show()
-    }
     override fun onPause() {
         super.onPause()
         playerViewModel.pausePlayer()

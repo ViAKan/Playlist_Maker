@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.PlaylistFragmentBinding
 import com.example.playlistmaker.media.presentation.PlaylistsViewModel
@@ -69,7 +70,6 @@ class PlaylistFragment : Fragment() {
             }
             Log.d("PLAYLISTS", playlists.toString())
         }
-
     }
 
     fun showMedia(text: String){

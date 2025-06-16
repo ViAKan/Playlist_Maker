@@ -8,6 +8,7 @@
         <item name="colorSecondary">@color/grey</item>
         <item name="colorOnSurface">@color/grey</item>
         <item name="colorOnContainer">@color/fade_black</item>
+        <item name="android:windowBackground">@null</item>
     </style>
 
 </resources>

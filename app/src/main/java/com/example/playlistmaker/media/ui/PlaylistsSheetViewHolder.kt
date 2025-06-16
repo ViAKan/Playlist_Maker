@@ -26,7 +26,7 @@ class PlaylistsSheetViewHolder(itemView: View): RecyclerView.ViewHolder(itemView
             Glide.with(itemView)
                 .load(imageFile) // или .load(imageUri)
                 .centerInside()
-                .transform(RoundedCorners(8))
+                .transform(RoundedCorners(2))
                 .placeholder(R.drawable.placeholder_max)
                 .into(image)
         } else {
