@@ -39,4 +39,8 @@
         android:name="com.example.playlistmaker.media.ui.NewPlaylistFragment"
         android:label="NewPlaylistFragment" />
 
+    <action
+        android:id="@+id/action_global_newPlaylistFragment"
+        app:destination="@id/newPlaylistFragment" />
+
 </navigation>

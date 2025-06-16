@@ -19,10 +19,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -62,7 +65,7 @@ class PlayerActivity : AppCompatActivity() {
 
     private lateinit var adapter: PlaylistsListAdapter
     private lateinit var playlists: ArrayList<Playlist>
-
+    lateinit var fragmentCont: FragmentContainerView
     private lateinit var bottomSheetDialog: BottomSheetDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,6 +94,7 @@ class PlayerActivity : AppCompatActivity() {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         val screenHeight = displayMetrics.heightPixels
         val halfScreenHeight = (screenHeight * 0.5).toInt()
+        fragmentCont = findViewById(R.id.fragment_container)
 
         bottomSheetDialog = BottomSheetDialog(this).apply {
             setContentView(R.layout.bottom_sheet_layout)
@@ -109,7 +113,8 @@ class PlayerActivity : AppCompatActivity() {
 
             findViewById<Button>(R.id.btnNewPlaylist)?.setOnClickListener {
                 dismiss()
-                // openNewPlaylistFragment()
+                fragmentCont.visibility = View.VISIBLE
+                findNavController(R.id.fragment_container).navigate(R.id.action_global_newPlaylistFragment)
             }
         }
 
@@ -126,11 +131,6 @@ class PlayerActivity : AppCompatActivity() {
                     fillColor = ColorStateList.valueOf(Color.WHITE)
                     elevation = 0f
                 })
-                val behavior = BottomSheetBehavior.from(sheet)
-                behavior.peekHeight = halfScreenHeight
-                behavior.skipCollapsed = true
-                behavior.isHideable = true
-                behavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
             bottomSheet?.viewTreeObserver?.addOnGlobalLayoutListener {
                 val maxHeight = (resources.displayMetrics.heightPixels * 0.6).toInt()

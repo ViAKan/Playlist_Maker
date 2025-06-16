@@ -11,6 +11,8 @@ import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.playlistmaker.databinding.ActivityHostBinding
 import com.example.playlistmaker.media.ui.MediaFragment
+import com.example.playlistmaker.media.ui.NewPlaylistFragment
+import com.example.playlistmaker.media.ui.PlaylistFragment
 import com.example.playlistmaker.search.ui.SearchFragment
 import com.example.playlistmaker.settings.ui.SettingsFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -40,16 +42,6 @@ class HostActivity: AppCompatActivity() {
                 else -> {
                     bottomNavigationView.visibility = View.VISIBLE
                 }
-            }
-        }
-        handleIntent(intent)
-    }
-
-    private fun handleIntent(intent: Intent?) {
-        when (intent?.getStringExtra("OPEN_SCREEN")) {
-            "NewPlaylistFragment" -> {
-                val navController = findNavController(R.id.container_view)
-                navController.navigate(R.id.newPlaylistFragment)
             }
         }
     }

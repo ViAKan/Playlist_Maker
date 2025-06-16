@@ -14,12 +14,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.NewPlaylistFragmentBinding
 import com.example.playlistmaker.media.presentation.PlaylistsViewModel
 import com.example.playlistmaker.media.domain.model.Playlist
+import com.example.playlistmaker.player.ui.PlayerActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -50,10 +52,12 @@ class NewPlaylistFragment : Fragment() {
             .setTitle("Все несохраненные данные будут потеряны")
             .setNeutralButton("Отмена") { dialog, which ->
             }.setPositiveButton("Завершить") { dialog, which ->
-                findNavController().popBackStack(R.id.mediaFragment, false)
+                findNavController().popBackStack()
+                (activity as? PlayerActivity)?.fragmentCont?.visibility = View.GONE
             }
         binding.buttonBack.setOnClickListener {
-            findNavController().popBackStack(R.id.mediaFragment, false)
+            findNavController().popBackStack()
+            (activity as? PlayerActivity)?.fragmentCont?.visibility = View.GONE
         }
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -95,7 +99,8 @@ class NewPlaylistFragment : Fragment() {
         binding.btnCreate.setOnClickListener{
             playListViewModel.createPlaylist(name, binding.inputDescription.text.toString(),currentCoverPath)
             Toast.makeText(requireContext(), "Плейлист $name создан", Toast.LENGTH_SHORT).show()
-            findNavController().popBackStack(R.id.mediaFragment, false)
+            findNavController().popBackStack()
+            (activity as? PlayerActivity)?.fragmentCont?.visibility = View.GONE
         }
     }
     private fun saveImageToPrivateStorage(uri: Uri) {
