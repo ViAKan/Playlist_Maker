@@ -11,9 +11,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -47,11 +49,13 @@ class NewPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var name = ""
+        val inputTitleLayout = binding.inputTitle1
+        val inputTitleEditText = binding.inputTitle
         playlists = ArrayList()
         confirmDialog = MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Все несохраненные данные будут потеряны")
-            .setNeutralButton("Отмена") { dialog, which ->
-            }.setPositiveButton("Завершить") { dialog, which ->
+            .setTitle(requireContext().getString(R.string.save_data))
+            .setNeutralButton(requireContext().getString(R.string.deny)) { dialog, which ->
+            }.setPositiveButton(requireContext().getString(R.string.finish)) { dialog, which ->
                 findNavController().popBackStack()
                 (activity as? PlayerActivity)?.fragmentCont?.visibility = View.GONE
             }
@@ -80,6 +84,7 @@ class NewPlaylistFragment : Fragment() {
             }
         }
         binding.inputTitle.addTextChangedListener(simpleTextWatcher)
+
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 //обрабатываем событие выбора пользователем фотографии

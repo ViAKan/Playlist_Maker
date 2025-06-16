@@ -14,6 +14,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
@@ -54,7 +55,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class PlayerActivity : AppCompatActivity() {
+class PlayerActivity : AppCompatActivity(), PlaylistsListAdapter.Listener {
 
     private lateinit var play: ImageButton
     private lateinit var currentTime: TextView
@@ -67,6 +68,8 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var playlists: ArrayList<Playlist>
     lateinit var fragmentCont: FragmentContainerView
     private lateinit var bottomSheetDialog: BottomSheetDialog
+    private lateinit var track: Track
+    private lateinit var playlistName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,7 +82,7 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         playlists = ArrayList()
-        adapter = PlaylistsListAdapter(playlists)
+        adapter = PlaylistsListAdapter(playlists,this)
 
         playListViewModel.loadAllPlaylists()
 
@@ -160,7 +163,7 @@ class PlayerActivity : AppCompatActivity() {
         val cover = findViewById<ImageView>(R.id.cover)
         var imgSource: String = ""
         val type = object : TypeToken<Track>() {}.type
-        val track = Gson().fromJson<Track>(intent.getStringExtra(NAME_TRACK), type)
+        track = Gson().fromJson<Track>(intent.getStringExtra(NAME_TRACK), type)
         likeButton = findViewById<ImageButton>(R.id.addToLikes)
         title.text = track.trackName
         author.text = track.artistName
@@ -206,7 +209,17 @@ class PlayerActivity : AppCompatActivity() {
                 PlayerViewModel.STATE_PAUSED, PlayerViewModel.STATE_PREPARED -> play.setImageResource(R.drawable.button_play)
             }
         }
-
+        playListViewModel.addTrackResult.observe(this) { result ->
+            when (result) {
+                is PlaylistsViewModel.AddTrackResult.Success -> {
+                    Toast.makeText(this, "Добавлено в плейлист $playlistName", Toast.LENGTH_SHORT).show()
+                    bottomSheetDialog.dismiss()
+                }
+                is PlaylistsViewModel.AddTrackResult.Error -> {
+                    Toast.makeText(this, "Трек уже добавлен в плейлист $playlistName", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     override fun onPause() {
@@ -217,6 +230,11 @@ class PlayerActivity : AppCompatActivity() {
     companion object {
         fun createArgs(strTrack: String): Bundle =
             bundleOf(NAME_TRACK to strTrack)
+    }
+
+    override fun onClick(playlist: Playlist) {
+        playlistName = playlist.name
+        playListViewModel.addTrackToPlaylist(playlist, track.trackId.toLong())
     }
 
 }

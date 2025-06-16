@@ -18,4 +18,19 @@ class PlaylistInteratorImpl(
     override suspend fun getAllPlaylists(): Flow<List<Playlist>> {
         return playlistRepository.getAllPlaylists()
     }
+
+    override suspend fun addTrackToPlaylist(playlistId: Long, trackId: Long): Boolean {
+        return try {
+            playlistRepository.addTrackToPlaylist(playlistId, trackId)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    override suspend fun isTrackInPlaylist(playlistId: Long, trackId: Long): Boolean {
+        val tracks = playlistRepository.getPlaylistTracks(playlistId)
+        return tracks.contains(trackId)
+    }
+
 }

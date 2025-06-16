@@ -35,4 +35,8 @@
     <string name="input_name_playlist">Название*</string>
     <string name="description_playlist">Описание</string>
     <string name="save">Создать</string>
+    <string name="bottom_sheet_name">Добавить в плейлист</string>
+    <string name="save_data">Все несохраненные данные будут потеряны</string>
+    <string name="deny">Отменить</string>
+    <string name="finish">Завершить</string>
 </resources>

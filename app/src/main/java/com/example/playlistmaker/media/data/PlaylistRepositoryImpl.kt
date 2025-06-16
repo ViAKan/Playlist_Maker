@@ -8,6 +8,7 @@ import com.example.playlistmaker.media.data.dto.PlaylistDto
 import com.example.playlistmaker.media.domain.db.PlaylistRepository
 import com.example.playlistmaker.media.domain.model.Playlist
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -28,5 +29,21 @@ class PlaylistRepositoryImpl(
 
     override  fun getAllPlaylists(): Flow<List<Playlist>> {
         return appDatabase.playlistDao().getAllPlaylists().map { entities -> entities.map{it.toPlaylist()} }
+    }
+
+    override suspend fun addTrackToPlaylist(playlistId: Long, trackId: Long) {
+        val playlist = appDatabase.playlistDao().getPlaylistById(playlistId)
+        val tracks = gson.fromJson<List<Long>>(playlist.tracksJson, object : TypeToken<List<Long>>() {}.type)
+        val updatedTracks = tracks.toMutableList().apply { add(trackId) }
+        val updatedPlaylist = playlist.copy(
+            tracksJson = gson.toJson(updatedTracks),
+            tracksCount = updatedTracks.size
+        )
+        appDatabase.playlistDao().update(updatedPlaylist)
+    }
+
+    override suspend fun getPlaylistTracks(playlistId: Long): List<Long> {
+        val playlist = appDatabase.playlistDao().getPlaylistById(playlistId)
+        return gson.fromJson(playlist.tracksJson, object : TypeToken<List<Long>>() {}.type)
     }
 }
