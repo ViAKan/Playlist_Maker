@@ -21,6 +21,10 @@ class TrackAdapter (
         holder.itemView.setOnClickListener {
             listener.onClick(tracks[position])
         }
+        holder.itemView.setOnLongClickListener {
+            listener.onLongClick(tracks[position])
+            true
+        }
     }
     override fun getItemCount(): Int {
         return tracks.size
@@ -34,5 +38,6 @@ class TrackAdapter (
 
     interface Listener{
         fun onClick(track: Track)
+        fun onLongClick(track: Track)
     }
 }

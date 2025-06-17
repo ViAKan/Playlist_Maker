@@ -43,7 +43,7 @@ const val HISTORY_PREFS = "history_prefs"
 const val HISTORY_KEY = "key_for_hist"
 const val NAME_TRACK = "name"
 const val SEARCH_DEBOUNCE_DELAY = 2000L
-private const val CLICK_DEBOUNCE_DELAY = 1000L
+const val CLICK_DEBOUNCE_DELAY = 1000L
 
 class SearchFragment: Fragment(), TrackAdapter.Listener {
 
@@ -241,6 +241,10 @@ class SearchFragment: Fragment(), TrackAdapter.Listener {
             searchViewModel.addTrackToHistory(track)
             Log.d("PlayerVM1", "Is favorite: ${track.isFavorite}")
         }
+    }
+
+    override fun onLongClick(track: Track) {
+        TODO("Not yet implemented")
     }
 
     private fun clickDebounce() : Boolean {

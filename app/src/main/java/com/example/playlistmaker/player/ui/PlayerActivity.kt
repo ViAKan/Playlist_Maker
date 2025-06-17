@@ -234,7 +234,7 @@ class PlayerActivity : AppCompatActivity(), PlaylistsListAdapter.Listener {
 
     override fun onClick(playlist: Playlist) {
         playlistName = playlist.name
-        playListViewModel.addTrackToPlaylist(playlist, track.trackId.toLong())
+        playListViewModel.addTrackToPlaylist(playlist, track)
     }
 
 }
