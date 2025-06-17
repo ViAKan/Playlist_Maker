@@ -11,7 +11,9 @@ object convert {
         description = description,
         coverPath = coverPath,
         tracksJson = tracksJson,
-        tracksCount = tracksCount
+        tracksCount = tracksCount,
+        creationDate = creationDate,
+        totalDuration = totalDuration
     )
     fun PlaylistDto.toPlaylistEntity() = PlaylistEntity(
         id = id,
@@ -19,6 +21,8 @@ object convert {
         description = description,
         coverPath = coverPath,
         tracksJson = tracksJson,
-        tracksCount = tracksCount
+        tracksCount = tracksCount,
+        creationDate = creationDate,
+        totalDuration = totalDuration
     )
 }

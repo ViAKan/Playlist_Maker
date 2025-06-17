@@ -32,6 +32,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+private const val QUALITY = 30
+
 class NewPlaylistFragment : Fragment() {
 
     private lateinit var binding: NewPlaylistFragmentBinding
@@ -103,7 +105,7 @@ class NewPlaylistFragment : Fragment() {
         }
         binding.btnCreate.setOnClickListener{
             playListViewModel.createPlaylist(name, binding.inputDescription.text.toString(),currentCoverPath)
-            Toast.makeText(requireContext(), "Плейлист $name создан", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), requireContext().getString(R.string.playlist)+" $name "+requireContext().getString(R.string.created), Toast.LENGTH_SHORT).show()
             findNavController().popBackStack()
             (activity as? PlayerActivity)?.fragmentCont?.visibility = View.GONE
         }
@@ -125,10 +127,13 @@ class NewPlaylistFragment : Fragment() {
         // создаём исходящий поток байтов в созданный выше файл
         val outputStream = FileOutputStream(file)
         // записываем картинку с помощью BitmapFactory
-        BitmapFactory
-            .decodeStream(inputStream)
-            .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
+        inputStream?.use { inp ->
+            outputStream.use { out ->
+                BitmapFactory.decodeStream(inp).compress(Bitmap.CompressFormat.JPEG, QUALITY, out)
+            }
+        }
         currentCoverPath = file.absolutePath
+
     }
 
 }

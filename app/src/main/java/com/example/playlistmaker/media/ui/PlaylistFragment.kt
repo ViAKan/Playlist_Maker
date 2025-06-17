@@ -15,7 +15,7 @@ import com.example.playlistmaker.media.presentation.PlaylistsViewModel
 import com.example.playlistmaker.media.domain.model.Playlist
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PlaylistFragment : Fragment() {
+class PlaylistFragment : Fragment(), PlaylistAdapter.Listener {
 
     companion object {
         private const val PLAYLISTS = "playlists_state"
@@ -42,7 +42,7 @@ class PlaylistFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         playlists = ArrayList()
-        adapter = PlaylistAdapter(playlists)
+        adapter = PlaylistAdapter(playlists, this)
         binding.recyclerView2.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerView2.adapter = adapter
 
@@ -74,6 +74,13 @@ class PlaylistFragment : Fragment() {
 
     fun showMedia(text: String){
         binding.mediaState.text = text
+    }
+
+    override fun onClick(playlist: Playlist) {
+        val bundle = Bundle().apply {
+            putLong("playlistId", playlist.id)
+        }
+        findNavController().navigate(R.id.action_mediaFragment_to_insidePlaylistFragment, bundle)
     }
 
 }

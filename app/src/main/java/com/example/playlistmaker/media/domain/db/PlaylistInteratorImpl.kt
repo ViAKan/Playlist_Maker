@@ -33,4 +33,8 @@ class PlaylistInteratorImpl(
         return tracks.contains(trackId)
     }
 
+    override suspend fun getPlaylistById(playlistId: Long): Playlist {
+        return playlistRepository.getPlaylistById(playlistId)
+    }
+
 }

@@ -14,6 +14,12 @@ class PlaylistsViewModel(private val playlistInteractor: PlaylistInteractor): Vi
     private val _playlists = MutableLiveData<MutableList<Playlist>>()
     fun observePlaylists(): LiveData<MutableList<Playlist>> =_playlists
 
+    private val _addTrackResult = MutableLiveData<AddTrackResult>()
+    val addTrackResult: LiveData<AddTrackResult> = _addTrackResult
+
+    private val _playlistById = MutableLiveData<Playlist>()
+    val playListById: LiveData<Playlist> = _playlistById
+
     init {
         loadAllPlaylists()
     }
@@ -36,8 +42,6 @@ class PlaylistsViewModel(private val playlistInteractor: PlaylistInteractor): Vi
             }
         }
     }
-    private val _addTrackResult = MutableLiveData<AddTrackResult>()
-    val addTrackResult: LiveData<AddTrackResult> = _addTrackResult
 
     fun addTrackToPlaylist(playlist: Playlist, trackId: Long) {
         viewModelScope.launch {
@@ -57,6 +61,12 @@ class PlaylistsViewModel(private val playlistInteractor: PlaylistInteractor): Vi
             } catch (e: Exception) {
                 _addTrackResult.postValue(AddTrackResult.Error(e.message ?: "Неизвестная ошибка"))
             }
+        }
+    }
+
+    fun loadPlaylistById(playlistId: Long) {
+        viewModelScope.launch {
+            _playlistById.postValue(playlistInteractor.getPlaylistById(playlistId))
         }
     }
 

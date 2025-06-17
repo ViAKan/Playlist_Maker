@@ -22,7 +22,9 @@ class PlaylistRepositoryImpl(
             description = description,
             coverPath = coverPath,
             tracksJson = gson.toJson(emptyList<Long>()),
-            tracksCount = 0
+            tracksCount = 0,
+            creationDate = System.currentTimeMillis(),
+            totalDuration = 0
         )
         appDatabase.playlistDao().insert(playlist.toPlaylistEntity())
     }
@@ -37,7 +39,7 @@ class PlaylistRepositoryImpl(
         val updatedTracks = tracks.toMutableList().apply { add(trackId) }
         val updatedPlaylist = playlist.copy(
             tracksJson = gson.toJson(updatedTracks),
-            tracksCount = updatedTracks.size
+            tracksCount = updatedTracks.size,
         )
         appDatabase.playlistDao().update(updatedPlaylist)
     }
@@ -45,5 +47,9 @@ class PlaylistRepositoryImpl(
     override suspend fun getPlaylistTracks(playlistId: Long): List<Long> {
         val playlist = appDatabase.playlistDao().getPlaylistById(playlistId)
         return gson.fromJson(playlist.tracksJson, object : TypeToken<List<Long>>() {}.type)
+    }
+
+    override suspend fun getPlaylistById(playlistId: Long): Playlist {
+        return appDatabase.playlistDao().getPlaylistById(playlistId).toPlaylist()
     }
 }

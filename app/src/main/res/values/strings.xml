@@ -39,4 +39,6 @@
     <string name="save_data">Все несохраненные данные будут потеряны</string>
     <string name="deny">Отменить</string>
     <string name="finish">Завершить</string>
+    <string name="playlist">Плейлист </string>
+    <string name="created"> создан</string>
 </resources>

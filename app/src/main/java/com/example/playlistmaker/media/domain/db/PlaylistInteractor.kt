@@ -13,4 +13,5 @@ interface PlaylistInteractor {
 
     suspend fun addTrackToPlaylist(playlistId: Long, trackId: Long): Boolean
     suspend fun isTrackInPlaylist(playlistId: Long, trackId: Long): Boolean
+    suspend fun getPlaylistById(playlistId: Long): Playlist
 }
