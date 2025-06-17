@@ -2,11 +2,9 @@ package com.example.playlistmaker.media.di
 
 import com.example.playlistmaker.media.data.LikeRepositoryImpl
 import com.example.playlistmaker.media.data.converter.TrackDbConvertor
+import com.example.playlistmaker.media.data.PlaylistRepositoryImpl
 import com.example.playlistmaker.media.domain.db.LikesRepository
-import com.example.playlistmaker.search.data.impl.TrackHistoryRepositoryImpl
-import com.example.playlistmaker.search.data.impl.TrackRepositoryImpl
-import com.example.playlistmaker.search.domain.api.TrackHistoryRepository
-import com.example.playlistmaker.search.domain.api.TrackRepository
+import com.example.playlistmaker.media.domain.db.PlaylistRepository
 import org.koin.dsl.module
 
 val repositoryModuleMedia = module {
@@ -14,5 +12,9 @@ val repositoryModuleMedia = module {
 
     single<LikesRepository> {
         LikeRepositoryImpl(get(), get())
+    }
+
+    single<PlaylistRepository> {
+        PlaylistRepositoryImpl(get(), get())
     }
 }

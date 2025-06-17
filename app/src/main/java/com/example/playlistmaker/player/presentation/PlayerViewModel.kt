@@ -59,6 +59,7 @@ class PlayerViewModel(private val player: PlayerInteractor, private val likeInte
     }
 
     private fun onPrepare() {
+        Log.d("PlayerPVM1", "onPrepare called")
         playerState.value = PlayerState(currentTime = "00:00", state = STATE_PREPARED, isPlayEnabled = true)
     }
 
@@ -92,25 +93,6 @@ class PlayerViewModel(private val player: PlayerInteractor, private val likeInte
             isFavorite.value = !currentlyLiked
         }
     }
-
-//    fun addToLikesOrRemove(track: Track){
-//        viewModelScope.launch {
-//            val newState = !track.isFavorite // Инвертируем текущее состояние трека
-//            track.isFavorite = newState
-//            Log.d("PlayerVM", "Current trackId: ${track.trackId}")
-//            if (newState) {
-//                likeInteractor.addToLikes(track)
-//                track.isFavorite = true
-//                isFavorite.postValue(true)
-//                Log.d("PlayerVM", "Is favorite: ${likeInteractor}")
-//            } else {
-//                likeInteractor.deleteFromLikes(track)
-//                track.isFavorite = false
-//                isFavorite.postValue(false)
-//                Log.d("PlayerVMDel", "Is favorite: ${likeInteractor}")
-//            }
-//        }
-//    }
 
     suspend fun addToLikes(track: Track){
         likeInteractor.addToLikes(track)

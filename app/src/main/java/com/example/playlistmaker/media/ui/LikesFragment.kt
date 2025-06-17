@@ -113,36 +113,13 @@ class LikesFragment : Fragment(), TrackAdapter.Listener {
         likesList.adapter = null
     }
 
-//    private fun render(state: LikesState) {
-//        when (state) {
-//            is LikesState.Content -> showContent(state.tracks!!)
-//            is LikesState.Empty -> showEmpty(state.message!!)
-//        }
-//    }
-//
-//    private fun showEmpty(message: String) {
-//        likesList.visibility = View.GONE
-//        placeholderMessage.visibility = View.VISIBLE
-//        placeholderImage.visibility = View.VISIBLE
-//        placeholderMessage.text = message
-//    }
-//
-//    private fun showContent(tracks: List<Track>) {
-//        likesList.visibility = View.VISIBLE
-//        placeholderMessage.visibility = View.GONE
-//        placeholderImage.visibility = View.GONE
-//        trackList.clear()
-//        trackList.addAll(tracks)
-//        adapter?.updateTracks(tracks)
-//    }
-
     override fun onClick(track: Track) {
         val strTrack = Gson().toJson(track)
 
         if(clickDebounce()) {
             findNavController().navigate(R.id.action_mediaFragment_to_playerActivity2,
                 PlayerActivity.createArgs(strTrack))
-            Log.d("PlayerVM2", "Is favorite: ${track.isFavorite}")
+            Log.d("PlayerPP2", "${track.artworkUrl100}")
         }
     }
 

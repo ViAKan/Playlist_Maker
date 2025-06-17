@@ -1,12 +1,18 @@
 package com.example.playlistmaker
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.playlistmaker.databinding.ActivityHostBinding
 import com.example.playlistmaker.media.ui.MediaFragment
+import com.example.playlistmaker.media.ui.NewPlaylistFragment
+import com.example.playlistmaker.media.ui.PlaylistFragment
 import com.example.playlistmaker.search.ui.SearchFragment
 import com.example.playlistmaker.settings.ui.SettingsFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -28,5 +34,15 @@ class HostActivity: AppCompatActivity() {
         bottomNavigationView.selectedItemId = R.id.mediaFragment
         bottomNavigationView.setupWithNavController(navController)
 
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.newPlaylistFragment -> {
+                    bottomNavigationView.visibility = View.GONE
+                }
+                else -> {
+                    bottomNavigationView.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 }
