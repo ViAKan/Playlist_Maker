@@ -25,6 +25,7 @@ import com.example.playlistmaker.media.presentation.PlaylistsViewModel
 import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
@@ -41,6 +42,20 @@ class NewPlaylistFragment : Fragment() {
     private val playListViewModel by viewModel<PlaylistsViewModel>()
     private lateinit var playlists: ArrayList<Playlist>
     private var currentCoverPath: String? = null
+    private var isEditMode = false
+    private var playlistId: Long = -1
+
+    companion object {
+        private const val PLAYLIST_ARG = "playlist_arg"
+
+        fun newInstance(playlist: Playlist? = null): NewPlaylistFragment {
+            return NewPlaylistFragment().apply {
+                arguments = Bundle().apply {
+                    playlist?.let { putParcelable(PLAYLIST_ARG, it) }
+                }
+            }
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -53,6 +68,35 @@ class NewPlaylistFragment : Fragment() {
         var name = ""
         val inputTitleLayout = binding.inputTitle1
         val inputTitleEditText = binding.inputTitle
+        val playlist = arguments?.getParcelable<Playlist>(PLAYLIST_ARG)
+        isEditMode = playlist != null
+        playlistId = playlist?.id ?: -1
+
+        if (isEditMode && !playlist?.name.isNullOrEmpty()) {
+            binding.btnCreate.isEnabled = true
+        }
+
+        if (isEditMode) {
+            playlist?.let {
+                binding.inputTitle.setText(it.name)
+                binding.inputDescription.setText(it.description)
+                currentCoverPath = it.coverPath
+
+                it.coverPath?.let { path ->
+                    try {
+                        binding.addCover.setImageURI(Uri.parse(path))
+                    } catch (e: Exception) {
+                        Log.e("NewPlaylistFragment", "Error loading cover image", e)
+                    }
+                }
+                binding.titleEditOr.text = getString(R.string.edit_playlist)
+                binding.btnCreate.text = getString(R.string.save_playlist_edits)
+            }
+        } else {
+            binding.titleEditOr.text = getString(R.string.new_playlist)
+            binding.btnCreate.text =getString(R.string.save)
+        }
+
         playlists = ArrayList()
         confirmDialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle(requireContext().getString(R.string.save_data))
@@ -104,8 +148,17 @@ class NewPlaylistFragment : Fragment() {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
         binding.btnCreate.setOnClickListener{
-            playListViewModel.createPlaylist(name, binding.inputDescription.text.toString(),currentCoverPath)
-            Toast.makeText(requireContext(), requireContext().getString(R.string.playlist)+" $name "+requireContext().getString(R.string.created), Toast.LENGTH_SHORT).show()
+            val name = binding.inputTitle.text.toString()
+            val description = binding.inputDescription.text.toString()
+
+            if (isEditMode) {
+                playListViewModel.updatePlaylist(playlistId, name, description, currentCoverPath)
+                Toast.makeText(requireContext(), getString(R.string.playlist)+" $name "+requireContext().getString(R.string.created), Toast.LENGTH_SHORT).show()
+            } else {
+                playListViewModel.createPlaylist(name, description, currentCoverPath)
+                Toast.makeText(requireContext(), getString(R.string.playlist)+" $name "+requireContext().getString(R.string.created), Toast.LENGTH_SHORT).show()
+            }
+
             findNavController().popBackStack()
             (activity as? PlayerActivity)?.fragmentCont?.visibility = View.GONE
         }

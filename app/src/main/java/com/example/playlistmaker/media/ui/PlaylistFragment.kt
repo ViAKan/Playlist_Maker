@@ -13,6 +13,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.PlaylistFragmentBinding
 import com.example.playlistmaker.media.presentation.PlaylistsViewModel
 import com.example.playlistmaker.media.domain.model.Playlist
+import com.example.playlistmaker.search.domain.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistFragment : Fragment(), PlaylistAdapter.Listener {
@@ -81,6 +82,7 @@ class PlaylistFragment : Fragment(), PlaylistAdapter.Listener {
             putLong("playlistId", playlist.id)
         }
         findNavController().navigate(R.id.action_mediaFragment_to_insidePlaylistFragment, bundle)
+        Log.d("TracksListPls", playlist.tracksJson)
     }
 
 }

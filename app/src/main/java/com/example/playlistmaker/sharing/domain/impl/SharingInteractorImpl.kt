@@ -1,5 +1,7 @@
 package com.example.playlistmaker.sharing.domain.impl
 
+import com.example.playlistmaker.search.data.mapper.toTrackDto
+import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.sharing.data.navigator.ExternalNavigatorImpl
 import com.example.playlistmaker.sharing.data.resources.ResourceProvider
 import com.example.playlistmaker.sharing.data.resources.ResourceProviderImpl
@@ -21,6 +23,10 @@ class SharingInteractorImpl(
 
     override fun openSupport() {
         externalNavigator.openEmail(getSupportEmailData())
+    }
+
+    override fun sharePlaylist(playlistName: String, description: String, tracks: List<Track>) {
+        externalNavigator.sharePlaylist(playlistName,description, tracks.map { it.toTrackDto() })
     }
 
     private fun getShareAppLink(): String {
