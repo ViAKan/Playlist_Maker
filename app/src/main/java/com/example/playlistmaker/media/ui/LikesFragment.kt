@@ -123,6 +123,10 @@ class LikesFragment : Fragment(), TrackAdapter.Listener {
         }
     }
 
+    override fun onLongClick(track: Track) {
+        TODO("Not yet implemented")
+    }
+
     private fun clickDebounce() : Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {

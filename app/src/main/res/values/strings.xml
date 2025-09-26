@@ -39,4 +39,18 @@
     <string name="save_data">Все несохраненные данные будут потеряны</string>
     <string name="deny">Отменить</string>
     <string name="finish">Завершить</string>
+    <string name="playlist">Плейлист </string>
+    <string name="created"> создан</string>
+    <string name="delete_track"> Хотите удалить трек?</string>
+    <string name="yes">ДА</string>
+    <string name="no">НЕТ</string>
+    <string name="no_tracks_to_share">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="share_playlist">Поделиться плейлистом</string>
+    <string name="share_in_playlist">Поделиться</string>
+    <string name="edit_playlist_info">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
+    <string name="want_to_delete">Хотите удалить плейлист</string>
+    <string name="save_playlist_edits">Сохранить</string>
+    <string name="edit_playlist">Редактировать</string>
+    <string name="no_tracks_in_plst">В плейлисте нет треков</string>
 </resources>

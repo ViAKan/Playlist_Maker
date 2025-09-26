@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.example.playlistmaker.R
+import com.example.playlistmaker.search.data.dto.TrackDto
 import com.example.playlistmaker.sharing.EmailDataMapper.toDto
 import com.example.playlistmaker.sharing.domain.model.EmailData
 import com.example.playlistmaker.sharing.domain.share.ExternalNavigator
+import java.util.Locale
 
 class ExternalNavigatorImpl(val context: Context) : ExternalNavigator {
 
@@ -38,5 +40,33 @@ class ExternalNavigatorImpl(val context: Context) : ExternalNavigator {
         supportIntent.putExtra(Intent.EXTRA_TEXT, text)
         supportIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(supportIntent)
+    }
+
+    override fun sharePlaylist(playlistName: String, description: String, tracks: List<TrackDto>) {
+        val shareText = buildPlaylistShareText(playlistName, description, tracks)
+        shareLink(shareText, context.getString(R.string.share_playlist))
+    }
+
+    private fun buildPlaylistShareText(
+        playlistName: String,
+        description: String,
+        tracks: List<TrackDto>
+    ): String {
+        return buildString {
+            append(playlistName).append("\n")
+            append(description).append("\n")
+            append("[${tracks.size}] треков").append("\n\n")
+
+            tracks.forEachIndexed { index, track ->
+                append("${index + 1}. ${track.artistName} - ${track.trackName} (${formatTrackTime(track.trackTimeMillis)})\n")
+            }
+        }
+    }
+
+    private fun formatTrackTime(millis: Long): String {
+        val totalSeconds = millis / 1000
+        val minutes = totalSeconds / 60
+        val seconds = totalSeconds % 60
+        return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
     }
 }

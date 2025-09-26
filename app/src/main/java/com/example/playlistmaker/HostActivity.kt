@@ -39,6 +39,9 @@ class HostActivity: AppCompatActivity() {
                 R.id.newPlaylistFragment -> {
                     bottomNavigationView.visibility = View.GONE
                 }
+                R.id.insidePlaylistFragment -> {
+                    bottomNavigationView.visibility = View.GONE
+                }
                 else -> {
                     bottomNavigationView.visibility = View.VISIBLE
                 }
